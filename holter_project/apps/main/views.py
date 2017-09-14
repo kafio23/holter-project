@@ -7,4 +7,5 @@ def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
 def home(request):
-    return HttpResponse("Home")
+    kwargs = {'title': 'Holter Monitor Web'}
+    return render(request, 'base.html', kwargs)
