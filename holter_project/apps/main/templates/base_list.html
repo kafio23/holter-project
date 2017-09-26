@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load static %}
+{% load main_tags %}
+
+{% block extra-head %}
+
+{% endblock %}
+
+{% block search-active %}active{% endblock %}
+{% block content-title %}{{title}}{% endblock %}
+{% block content-suptitle %}{{suptitle}}{% endblock %}
+
+{% block content %}
+
+
+<div style="clear: both;"></div>
+<br>
+<table class="table table-hover">
+  <tr>
+    <th>#</th>
+    {% for key in keys %}
+    <th>{{ key|title }}</th>
+    {% endfor%}
+  </tr>
+
+  {% for object in objects %}
+    <tr class="clickable-row" data-href="{{object.get_absolute_url}}">
+      <td>{{ forloop.counter|add:offset }}</td>
+      {% for key in keys %}
+      <td>{{ object|attr:key }}</td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+</table>
+
+
+
+{% endblock %}
