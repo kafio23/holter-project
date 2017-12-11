@@ -2,5 +2,7 @@
 *.pyc
 .project
 *.sqlite3
+*vscode
+*000*
 
 # https://gist.github.com/octocat/9257657
