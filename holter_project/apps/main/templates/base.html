@@ -1,169 +1,146 @@
 <!DOCTYPE html>
+{% load staticfiles %}
 {% load static %}
 {# Load the tag library #}
 {% load bootstrap3 %}
 
 {# Load CSS and JavaScript #}
 {% bootstrap_css %}
-{% bootstrap_javascript %}
+{# bootstrap_javascript #}
 
 {# Display django.contrib.messages as Bootstrap alerts #}
 {% bootstrap_messages %}
 
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <title>{% block title %}Holter Monitor{% endblock %}</title>
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous"-->
-    <link href="{% static 'css/bootstrap.css' %}" media="all" rel="stylesheet">
-
-    <style type="text/css">
-      body
-      .logo {padding-top: 5px; height: 50px}
-      .clickable-row {cursor: pointer;}
-      .col-no-padding { padding-left:0;}
-      .gi-2x{font-size: 2em;}
-      .gi-3x{font-size: 3em;}
-      .gi-4x{font-size: 4em;}
-      .gi-5x{font-size: 5em;}
-    </style>
-
-    <script src="{% static 'js/jquery.min.js' %}"></script>
-    {% block extra-head %}
+<head>
+    {% block head %}
+    <title>Holter Monitor</title>
+    <!-- Latest compiled and minified CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" media="all" rel="stylesheet">
+    <!-- Optional theme -->
     {% endblock %}
-  
-  </head>
-  
-  <body>
+</head>
 
-{% block main_menu %}
-  <nav class="navbar navbar-expand-lg bg-light">
-    
-    
-    <div class="navbar-header">
+<body>
 
-      <a class="navbar-brand" href="{% url 'index' %}" style="padding-top:1px"><img class="logo" alt="JRO" src="{% static "images/heart-beat.jpg" %}"></a>
-   
-
-      <!--a class="navbar-brand">Holter Monitor</a-->
-     
-
-    </div>
-
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-      <ul class="nav navbar-nav">
-      <!--ul class="navbar-nav"-->
-        <li class="nav-item active">
-          <a class="nav-link" href="{% url 'url_home' %}">Home <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-         <a class="nav-link" href="#">Bluetooth</a>
-       </li>
-       <li class="nav-item">
-         <a class="nav-link" href="{% url 'url_doctors_list' %}">Doctores</a>
-       </li>
-       <li class="nav-item">
-         <a class="nav-link" href="{% url 'url_patients_list' %}">Pacientes</a>
-       </li>
-
-       <li class="nav-item dropdown">
-         <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-           Dropdown link
-         </a>
-         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-           <a class="dropdown-item" href="#">Action</a>
-           <a class="dropdown-item" href="#">Another action</a>
-           <a class="dropdown-item" href="#">Something else here</a>
-         </div>
-       </li>
+<style type="text/css">
+    body
+        .logo {padding-top: 5px; height: 50px}
+        .clickable-row {cursor: pointer;}
+        .col-no-padding { padding-left:0;}
+        .gi-2x{font-size: 2em;}
+        .gi-3x{font-size: 3em;}
+        .gi-4x{font-size: 4em;}
+        .gi-5x{font-size: 5em;}
+</style>
         
-      </ul>
-
-      <ul class="nav navbar-nav navbar-right">
-          <li class="nav-divider"></li>
-          {% if user.is_authenticated %}
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Hi {{ user.username }}<span class="caret"></span></a>
-             <ul class="dropdown-menu" role="menu">
-                <li><a href="/admin">Control Panel</a></li>
-                <li><a href="{% url 'url_logout' %}">Logout</a></li>
-             </ul>
-          </li>
-          {% else %}
-          <li><a href="{% url 'url_login' %}?next={{request.get_full_path}}">Login</a></li>
-          {% endif %}
-        </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-      </ul>
+<nav class="navbar navbar-expand-lg">
+                
+                
+    <div class="navbar-header">
+        <a class="navbar-brand" href="{% url 'index' %}" style="padding-top:1px"><img class="logo" alt="Holter" src="{% static "images/heart-beat.jpg" %}"></a>
     </div>
-
-  </nav>
-
+            
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="nav navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'url_home' %}">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                 <a class="nav-link" href="{% url 'url_home' %}">Bluetooth</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'url_doctors_list' %}">Doctores</a>
+            </li>
+            <li class="nav-item">
+                 <a class="nav-link" href="{% url 'url_patients_list' %}">Pacientes</a>
+            </li>
+            
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                       Dropdown link
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                </div>
+            </li>
+        </ul>
+            
+        <ul class="nav navbar-nav navbar-right">
+            <li class="nav-divider"></li>
+            {% if user.is_authenticated %}
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Hi {{ user.username }}<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="/admin">Control Panel</a></li>
+                    <li><a href="{% url 'url_logout' %}">Logout</a></li>
+                </ul>
+            </li>
+            {% else %}
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+                <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                <li><a href="{% url 'url_login' %}?next={{request.get_full_path}}">Login</a></li>
+            </ul>
+            {% endif %}
+        </ul>
+    </div>    
+</nav>
+    
+    
 <div style="clear: both;"></div>
-{% endblock %}
-
-
 
 
 <div class="container">
-  <div id="page" class="row" style="min-height:600px">
+    <div id="page" class="row" style="min-height:600px">
+        {% if no_sidebar %}
+        <div class="col-md-0 hidden-xs hidden-sm" role="complementary"></div>
+        {% else %}
+        <div class="col-md-3 hidden-xs hidden-sm" role="complementary">
+            <br><br>
+            <div id="sidebar">
+            {% block sidebar%}
+                  {# include "sidebar_devices.html" #}
+            {% endblock %}
+            </div>
+        </div>
+        {% endif %}
 
-    {% if no_sidebar %}
-    <div class="col-md-0 hidden-xs hidden-sm" role="complementary"></div>
+        {% if no_sidebar %}
+	        <div class="col-md-12 col-xs-12" role="main">
+        {% else %}
+            <div class="col-md-9 col-xs-12" role="main">
+        {% endif %}
+        
+        <div class="page-header">
+            <h1>{% block content-title %}{% endblock %} <small>{% block content-suptitle %}{% endblock %}</small></h1>
+        </div>
+        
+        {% block messages %}
+	        {% if messages %}
+	            {% for message in messages %}
+	                <div class="alert alert-{% if message.tags %}{% if 'error' in message.tags %}danger{% else %}{{ message.tags }}{% endif %}{% else %}info{% endif %} alert-dismissible" role="alert">
+	                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	                    <strong>{{message.tags|title}}!</strong> {{ message }}
+	                </div>
+	            {% endfor %}
+	        {% endif %}
+        {% endblock %}
 
-    {% else %}
-     <div class="col-md-3 hidden-xs hidden-sm" role="complementary">
-       <br><br>
-  	       <div id="sidebar">
-  	       {% block sidebar%}
-               {# include "sidebar_devices.html" #}
-          {% endblock %}
-  	       </div>
-  	   </div>
-    {% endif %}
+        {% block content %}
+        
+            <!--CODE!-->
 
+	    {% endblock %}
 
-    {% if no_sidebar %}
-	   <div class="col-md-12 col-xs-12" role="main">
-    {% else %}
-     <div class="col-md-9 col-xs-12" role="main">
-    {% endif %}
-	   <div class="page-header">
-        <h1>{% block content-title %}{% endblock %} <small>{% block content-suptitle %}{% endblock %}</small></h1>
-       </div>
-       {% block messages %}
-	       {% if messages %}
-	         {% for message in messages %}
-	         <div class="alert alert-{% if message.tags %}{% if 'error' in message.tags %}danger{% else %}{{ message.tags }}{% endif %}{% else %}info{% endif %} alert-dismissible" role="alert">
-	           <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	           <strong>{{message.tags|title}}!</strong> {{ message }}
-	         </div>
-	         {% endfor %}
-	       {% endif %}
-       {% endblock %}
+	        </div>
+	        </div>
+    </div><!--/row-->
+</div><!--/container-->
 
-	   {% block content %}
-	   {% endblock %}
-
-	   </div>
-
-
-	</div><!--/row-->
-</div> <!-- container -->
-
-
-
-
-<div id="debug">{{debug}}</div>
-
+             
 {% block footer %}
 <footer class="footer">
   <div class="container">
@@ -176,12 +153,17 @@
 {% endblock %}
 
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="{% static 'js/bootstrap.min.js' %}"></script>
-<script src="{% static 'js/bootstrap.js' %}"></script>
-  
+{% block tail %}
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+{% endblock %}
+
+
 {% block extra-js %}
 {% endblock%}
-  </body>
+
+
+</body>
 </html>

@@ -1,2 +1,4 @@
 Django==1.11
 django-bootstrap3==9.0.0
+numpy==1.13
+plotly==2.2.3
