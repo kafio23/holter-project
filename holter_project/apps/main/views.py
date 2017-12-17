@@ -2,13 +2,16 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.generic import TemplateView
+
 #Plotly
 import plotly.plotly as py
 from plotly.graph_objs import *
 from plotly.offline import plot
 import plotly.graph_objs as go
+
+import pandas as pd
 import numpy as np
-import glob
+
 import os
 import datetime
 
@@ -162,3 +165,31 @@ class Plot2DView(TemplateView):
         return context
 
 
+
+def plot_ecg():
+
+    df = pd.read_csv('/home/fiorella/workspace/holter_project/holter_project/data/ecg_mcv_title.csv')
+    trace1 = go.Scatter(
+                        x=df['x'], y=df['y'], # Data
+                        mode='lines', name='signal' # Additional options
+                        )
+
+    layout = go.Layout(title='Simple Plot from csv data',
+                   plot_bgcolor='rgb(230, 230,230)')
+                   
+    data = [trace1]
+    fig = go.Figure(data=data, layout=layout)
+    plot_div = plot(fig, output_type='div', include_plotlyjs=False)
+    return plot_div
+
+    return
+
+
+class PlotECG(TemplateView):
+    template_name = "plot.html"
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(PlotECG, self).get_context_data(**kwargs)
+        context['plot'] = plot_ecg()
+        return context

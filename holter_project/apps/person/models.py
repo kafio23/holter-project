@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from django.contrib.auth.models import User, UserManager
 from django.shortcuts import get_object_or_404
+from django.core.urlresolvers import reverse
 
 from django.db import models
 
@@ -34,3 +35,6 @@ class Patient(models.Model):
 
     class Meta:
         db_table = 'patient_users'
+
+    def get_absolute_url(self):
+        return reverse('url_patient_view', args=[str(self.pk)])

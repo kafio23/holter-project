@@ -1,0 +1,15 @@
+{% extends "base_list.html" %}
+
+{% block extra-js%}
+<script>
+$(document).ready(function() {
+
+{% for key in keys %}
+
+    $("#patient-{{key.pk}}").click(function() {
+        //document.location = "{# url 'url_patient_view' key.pk #}";
+    });
+
+{% endfor %}
+</script>
+{% endblock %}

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from django.http.request import QueryDict
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -43,7 +43,7 @@ def patients_list(request):
     kwargs['title'] = 'Pacientes'
     kwargs['suptitle'] = 'Cardiología'
 
-    return render(request, 'doctors_list.html', kwargs)
+    return render(request, 'patients_list.html', kwargs)
 
 
 def get_paginator(model, page, order, filters={}, n=10):
@@ -88,3 +88,16 @@ def get_paginator(model, page, order, filters={}, n=10):
     kwargs['offset'] = (int(page)-1)*n if page else 0
 
     return kwargs
+
+
+def patient_view(request, patient_id):
+
+    patient = get_object_or_404(Patient, pk=patient_id)
+
+    kwargs = {}
+    kwargs['patient'] = patient
+    kwargs['title']   = patient.last_name
+    kwargs['suptitle'] = patient.first_name
+    #kwargs['no_sidebar'] = True
+
+    return render(request, 'patient.html', kwargs)
