@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block content-title %}Signal{% endblock %}
+{% block content-suptitle %}Upload{% endblock %}
+
+{% block content %}
+  {% if form.is_multipart %}
+    <form class="form" enctype="multipart/form-data" method="post" action="{{action}}">
+  {% else %}
+    <form class="form" method="post" action="{{action}}">
+  {% endif %}
+  {% csrf_token %}
+  {% bootstrap_form form layout='horizontal' size='medium' %}
+        <div style="clear: both;"></div>
+            <br>
+  {% if extra_button %}
+        <div class="pull-left">
+            <button type="button" class="btn btn-primary" id="bt_{{extra_button}}">{{extra_button}}</button>  
+        </div>
+  {% endif %}
+  {% if button %}
+        <div class="pull-right">
+            <button type="button" class="btn btn-primary" onclick="{% if previous %}window.location.replace('{{ previous }}');{% else %}history.go(-1);{% endif %}">{% if cancel %}{{cancel}}{% else %}Cancel{% endif %}</button>
+            <button type="submit" class="btn btn-primary">{{button}}</button>
+        </div>
+  {% endif %}
+    </form>
+{% endblock %}

@@ -7,6 +7,7 @@ from django.http.request import QueryDict
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .models import Doctor, Patient
+from .forms import UploadFileForm
 
 def doctors_list(request):
     
@@ -101,3 +102,37 @@ def patient_view(request, patient_id):
     #kwargs['no_sidebar'] = True
 
     return render(request, 'patient.html', kwargs)
+
+
+def patient_upload(request, patient_id):
+
+    patient = get_object_or_404(Patient, pk=patient_id)
+
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            handle_uploaded_file(request.FILES['file'])
+            return HttpResponseRedirect('/success/url/')
+    else:
+        form = UploadFileForm()
+
+    kwargs = {}
+    kwargs['patient']  = patient
+    kwargs['title']    = patient.last_name
+    kwargs['suptitle'] = patient.first_name
+    kwargs['form']     = form
+    #kwargs['no_sidebar'] = True
+
+    return render(request, 'patient_upload.html', kwargs)
+
+
+
+def upload_file(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            handle_uploaded_file(request.FILES['file'])
+            return HttpResponseRedirect('/success/url/')
+    else:
+        form = UploadFileForm()
+    return render(request, 'upload.html', {'form': form})

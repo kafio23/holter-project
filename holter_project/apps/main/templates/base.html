@@ -39,6 +39,9 @@
                  <a class="nav-link" href="{% url 'plot1d' %}">Bluetooth</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="{% url 'plot1d' %}">Test</a>
+           </li>
+            <li class="nav-item">
                 <a class="nav-link" href="{% url 'url_doctors_list' %}">Doctores</a>
             </li>
             <li class="nav-item">
@@ -91,7 +94,7 @@
             <br><br>
             <div id="sidebar">
             {% block sidebar%}
-                  {# include "sidebar_devices.html" #}
+                  {% include "sidebar1.html" %}
             {% endblock %}
             </div>
         </div>
