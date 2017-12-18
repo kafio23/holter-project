@@ -121,7 +121,7 @@ def patient_upload(request, patient_id):
     kwargs['title']    = patient.last_name
     kwargs['suptitle'] = patient.first_name
     kwargs['form']     = form
-    #kwargs['no_sidebar'] = True
+    kwargs['button']   = 'Upload'
 
     return render(request, 'patient_upload.html', kwargs)
 
