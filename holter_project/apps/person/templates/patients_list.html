@@ -6,10 +6,12 @@ $(document).ready(function() {
 
 {% for key in keys %}
 
-    $("#patient-{{key.pk}}").click(function() {
-        //document.location = "{# url 'url_patient_view' key.pk #}";
+    $(".clickable-row").click(function() {
+        document.location = $(this).data("href");
     });
 
 {% endfor %}
+
+});
 </script>
 {% endblock %}
