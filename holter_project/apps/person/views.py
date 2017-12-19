@@ -110,6 +110,21 @@ def patient_view(request, patient_id):
     return render(request, 'patient.html', kwargs)
 
 
+def patient_overview(request, patient_id):
+
+    patient   = get_object_or_404(Patient, pk=patient_id)
+    diagnosis = Diagnosis.objects.filter(patient=patient)
+
+    kwargs = {}
+    kwargs['patient'] = patient
+    kwargs['objects'] = diagnosis
+    kwargs['title']   = 'Overview'
+    kwargs['suptitle'] = patient.first_name+' '+patient.last_name
+    kwargs['keys'] = ['doctor', 'diagnosis', 'date']
+
+    return render(request, 'patient_overview.html', kwargs)
+
+
 def patient_upload(request, patient_id):
 
     patient = get_object_or_404(Patient, pk=patient_id)

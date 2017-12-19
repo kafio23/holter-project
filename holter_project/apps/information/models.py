@@ -16,6 +16,9 @@ class Signal(models.Model):
     class Meta:
         db_table = 'signals'
 
+    def __str__(self):
+        return u'%s, %s' % (self.name, self.acquisition_date)
+
 
 class Diagnosis(models.Model):
     doctor    = models.ForeignKey(Doctor, verbose_name='Doctor')
@@ -27,3 +30,6 @@ class Diagnosis(models.Model):
 
     class Meta:
         db_table = 'diagnosis'
+
+    def __str__(self):
+        return u'%s, %s' % (self.patient, self.diagnosis)

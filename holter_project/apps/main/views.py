@@ -21,6 +21,7 @@ def index(request):
 
 def home(request):
     kwargs = {'title': 'Holter Monitor Web'}
+    kwargs['no_sidebar'] = True
     return render(request, 'body.html', kwargs)
 
 def plot_graph():
