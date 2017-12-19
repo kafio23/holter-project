@@ -20,7 +20,7 @@
   </tr>
 
   {% for object in objects %}
-    <tr class="clickable-row" data-href="" id="diagnosis-{{object.pk}}">
+    <tr class="clickable-row" data-href="{{ object.get_url_diagnosis_plot }}" id="diagnosis-{{object.pk}}">
       <td>{{ forloop.counter }}</td> {# forloop.counter|add:offset #}
       {% for key in keys %}
       <td>{{ object|attr:key }}</td>

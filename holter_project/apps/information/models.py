@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 
 from django.db import models
+from django.core.urlresolvers import reverse
 from apps.person.models import Doctor, Patient
 
 import datetime
@@ -33,3 +34,6 @@ class Diagnosis(models.Model):
 
     def __str__(self):
         return u'%s, %s' % (self.patient, self.diagnosis)
+
+    def get_url_diagnosis_plot(self):
+        return reverse('url_diagnosis_plot', args=[self.patient.pk, str(self.pk)])
