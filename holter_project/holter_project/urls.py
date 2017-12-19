@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^', include('apps.accounts.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^person/', include('apps.person.urls')),
+    url(r'^person/', include('apps.information.urls')),
 ]
 
 if settings.DEBUG:

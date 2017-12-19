@@ -88,6 +88,8 @@ class Plot1DView(TemplateView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(Plot1DView, self).get_context_data(**kwargs)
+        print 'HAHA'
+        print kwargs
         context['plot'] = plot1d()
         context['no_sidebar'] = True
         return context
