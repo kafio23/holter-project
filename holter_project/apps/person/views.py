@@ -1,13 +1,19 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+#from __future__ import unicode_literals
+from __future__ import absolute_import
 
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from django.http.request import QueryDict
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from django.contrib import messages
+from django.core.files.storage import FileSystemStorage
 
 from .models import Doctor, Patient
 from .forms import UploadFileForm
+from apps.information.models import Diagnosis, Signal
 
 def doctors_list(request):
     
@@ -107,12 +113,28 @@ def patient_view(request, patient_id):
 def patient_upload(request, patient_id):
 
     patient = get_object_or_404(Patient, pk=patient_id)
+    doctors  = Doctor.objects.all()
+    doctor = doctors[0]
 
-    if request.method == 'POST':
+    if request.method == 'POST' and request.FILES['file']:
+        print request
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            handle_uploaded_file(request.FILES['file'])
-            return HttpResponseRedirect('/success/url/')
+            myfile   = request.FILES['file']
+            fs = FileSystemStorage()
+            filename = fs.save(myfile.name, myfile)
+            uploaded_file_url = fs.url(filename)
+
+            new_signal = Signal(name=myfile.name, parameters='')
+            new_signal.save()
+            new_diagnosis = Diagnosis(doctor=doctor, patient=patient, signal=new_signal, diagnosis='Ingresar diagnostico:...')
+            new_diagnosis.save()
+
+            messages.success(request, 'Archivo añadido a la base de datos')
+            return HttpResponseRedirect(reverse('url_patient_view', args=[patient_id]))
+        else:
+            messages.error(request, 'Ingresar archivo con formato valido')
+            return HttpResponseRedirect(reverse('url_patient_view', args=[patient_id]))
     else:
         form = UploadFileForm()
 
@@ -128,6 +150,7 @@ def patient_upload(request, patient_id):
 
 
 def upload_file(request):
+
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():

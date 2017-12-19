@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 from django.contrib.auth.models import User, UserManager
 from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
 
 from django.db import models
+
+#from apps.information.models import Diagnosis
 
 import datetime
 
