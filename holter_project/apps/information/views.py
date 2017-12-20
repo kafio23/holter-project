@@ -34,5 +34,5 @@ class PlotECG(TemplateView):
         kwargs['title']   = 'Diagnosis'
         kwargs['suptitle'] = diagnosis.diagnosis
         context = super(PlotECG, self).get_context_data(**kwargs)
-        context['plot'] = plot_ecg('ecg_xy.csv')
+        context['plot'] = plot_ecg('ecg_mcvxy.csv')
         return context

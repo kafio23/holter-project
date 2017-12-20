@@ -29,3 +29,19 @@
   {% endfor %}
 </table>
 {% endblock %}
+
+{% block extra-js%}
+<script>
+$(document).ready(function() {
+
+{% for object in objects %}
+
+    $(".clickable-row").click(function() {
+        document.location = $(this).data("href");
+    });
+
+{% endfor %}
+
+});
+</script>
+{% endblock %}

@@ -132,12 +132,14 @@ def patient_upload(request, patient_id):
     doctor = doctors[0]
 
     if request.method == 'POST' and request.FILES['file']:
-        print request
+        
         form = UploadFileForm(request.POST, request.FILES)
+        path = 'data/'
+
         if form.is_valid():
             myfile   = request.FILES['file']
             fs = FileSystemStorage()
-            filename = fs.save(myfile.name, myfile)
+            filename = fs.save(path+myfile.name, myfile)
             uploaded_file_url = fs.url(filename)
 
             new_signal = Signal(name=myfile.name, parameters='')
