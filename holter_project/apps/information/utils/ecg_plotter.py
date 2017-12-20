@@ -16,9 +16,16 @@ def plot_ecg(file_name):
 
     path = '/data/'
     df = pd.read_csv(settings.MEDIA_ROOT+path+file_name)
+
+    try:
+        x=df['x']
+        y=df['y']
+    except:
+        df = pd.read_csv(settings.MEDIA_ROOT+path+file_name, sep=';')
+
     x=df['x']
     y=df['y']
-
+    
     #---------------- Processing Signal----------------
     ## Filtro Pasa-Bajas
     y=signal.savgol_filter(y,21,7)
