@@ -60,6 +60,7 @@ def plot_ecg(file_name):
     ## BPM
     rateBPM = len(tm_peaks)*1.0 / (x[x.last_valid_index()]-x[0]) * 60.0
     print 'rateBPM: ', rateBPM
+    print 'Valores rateBPM: ', rateBPM_values
 
     ## Mean R-R Interval
     rrmean_values = []
@@ -80,7 +81,20 @@ def plot_ecg(file_name):
         values['FA'] = True
     if np.any(down_rr_mean):
         values['FA'] = True
+    
+    values['rr_mean'] = rr_mean
+    values['up_rr_mean'] = rr_mean*1.15
+    values['down_rr_mean'] = rr_mean*0.85
 
+    values['rateBPM'] = rateBPM
+    values['cycles_num'] = len(peaks_index)
+    values['cycles'] = []
+    cycles = []
+    for i in range(0,len(peaks_index)-1):
+        cycles.append('Intervalo R-R #'+str(i+1)+' - #'+str(i+2) +': '+str(rateBPM_values[i]))
+        
+    values['cycles'] = cycles
+    print cycles
     #--------------------------------------------------
 
     trace1 = graph_objs.Scatter(

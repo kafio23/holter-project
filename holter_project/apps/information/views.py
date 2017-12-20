@@ -30,12 +30,23 @@ class PlotECG(TemplateView):
         diagnosis = get_object_or_404(Diagnosis, pk=kwargs['diag_id'])
         patient   = diagnosis.patient
 
+        plot, values = plot_ecg(diagnosis.signal.name)
+        if values['FA']:
+            result = 'Presencia de Arritmia de Fibrilación auricular'
+        else:
+            result = 'No se detecta presencia de Fibrilación Auricular'
+
         kwargs['patient'] = patient
         kwargs['title']   = 'Diagnosis'
         kwargs['suptitle'] = diagnosis.diagnosis
         context = super(PlotECG, self).get_context_data(**kwargs)
-        context['plot'], values = plot_ecg(diagnosis.signal.name)
-        context['result'] = 'No se detecta presencia de Fibrilación Auricular'
-        if values['FA']:
-            context['result'] = 'Presencia de Arritmia de Fibrilación auricular'
+        context['plot']          = plot
+        context['result']        = result
+        context['rateBPM']       = values['rateBPM']
+        context['cycles_num']    = values['cycles_num']
+        context['cycles']        = values['cycles']
+        context['rr_mean']       = values['rr_mean']
+        context['up_rr_mean']    = values['up_rr_mean']
+        context['down_rr_mean']  = values['down_rr_mean']
+        
         return context

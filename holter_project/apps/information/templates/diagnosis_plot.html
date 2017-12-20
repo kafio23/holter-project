@@ -20,6 +20,20 @@
 </div>
 <div class="col-md-12">
   {{result}}
+  <br>
+  <b># Ciclos cardiacos: </b> {{cycles_num}}
+  <br>
+  <b>Ritmo cardiaco promedio: </b> {{rateBPM}}
+  <br>
+  <b>Limite R-R superior: </b> {{up_rr_mean}}
+  <br>
+  <b>Limite R-R inferior: </b> {{down_rr_mean}}
+  <br>
+  <br>
+  {% for cycle in cycles%}
+    {{cycle}} segundos
+    <br>
+  {% endfor %}
 </div>
 
 <!-- /.container -->
