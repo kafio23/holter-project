@@ -14,7 +14,8 @@ from detect_peaks import detect_peaks
 
 def plot_ecg(file_name):
 
-    df = pd.read_csv(settings.MEDIA_ROOT+'/'+file_name)
+    path = '/data/'
+    df = pd.read_csv(settings.MEDIA_ROOT+path+file_name)
     x=df['x']
     y=df['y']
 
@@ -34,8 +35,10 @@ def plot_ecg(file_name):
 
     ## Picos Bajos
     peaks_index = detect_peaks(-ecg_data, mph=0.6, mpd=0.150, show=True)
-    ecg_peaks = ecg_data[peaks_index]
+    ecg_peaks = -ecg_data[peaks_index]
     tm_peaks = x[peaks_index]
+    tm_peaks = np.array(tm_peaks)
+    print 'Indices: ', peaks_index
     print 'Picos Bajos: ', ecg_peaks
     
     ## Segundos entre intervalos
@@ -43,15 +46,34 @@ def plot_ecg(file_name):
     rateBPM_sum    = 0
     if len(peaks_index) > 9:  #minimo 10 ciclos
         for i in range(1,len(peaks_index)):
-            t_dif = x[i]-x[i-1]
+            t_dif = tm_peaks[i]-tm_peaks[i-1]
             rateBPM_values.append(t_dif) 
         rateBPM_sum = sum(rateBPM_values)
     
     ## BPM
-    rateBPM = len(peaks_index) / (x[(len(x)-1)]-x[0]) * 60
+    rateBPM = len(tm_peaks)*1.0 / (x[x.last_valid_index()]-x[0]) * 60.0
     print 'rateBPM: ', rateBPM
 
     ## Mean R-R Interval
+    rrmean_values = []
+    rr_mean       = 0
+    for i in range(0,len(rateBPM_values)):
+        rr_mean = 0.75 * rr_mean + 0.25 * rateBPM_values[i]
+        rrmean_values.append(rr_mean)
+
+    up_rr_mean = np.where(rateBPM_values>=(rr_mean*1.15))
+    down_rr_mean = np.where(rateBPM_values<(rr_mean*0.85))
+    print 'RR-MEAN: ', rr_mean
+    print 'UP-rr-mean', up_rr_mean
+    print 'DOWN-rr-mean', down_rr_mean
+
+    ## Resultado
+    values = {'FA': False}
+    if np.any(up_rr_mean):
+        values['FA'] = True
+    if np.any(down_rr_mean):
+        values['FA'] = True
+
     #--------------------------------------------------
 
     trace1 = graph_objs.Scatter(
@@ -65,4 +87,4 @@ def plot_ecg(file_name):
     data = [trace1]
     fig = graph_objs.Figure(data=data, layout=layout)
     plot_div = plot(fig, output_type='div', include_plotlyjs=False)
-    return plot_div
+    return plot_div, values

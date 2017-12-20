@@ -148,7 +148,7 @@ def patient_upload(request, patient_id):
             new_diagnosis.save()
 
             messages.success(request, 'Archivo añadido a la base de datos')
-            return HttpResponseRedirect(reverse('url_patient_view', args=[patient_id]))
+            return HttpResponseRedirect(reverse('url_patient_overview', args=[patient_id]))
         else:
             messages.error(request, 'Ingresar archivo con formato valido')
             return HttpResponseRedirect(reverse('url_patient_view', args=[patient_id]))

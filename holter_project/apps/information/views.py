@@ -34,5 +34,8 @@ class PlotECG(TemplateView):
         kwargs['title']   = 'Diagnosis'
         kwargs['suptitle'] = diagnosis.diagnosis
         context = super(PlotECG, self).get_context_data(**kwargs)
-        context['plot'] = plot_ecg('ecg_mcvxy.csv')
+        context['plot'], values = plot_ecg(diagnosis.signal.name)
+        context['result'] = 'No se detecta presencia de Fibrilación Auricular'
+        if values['FA']:
+            context['result'] = 'Presencia de Arritmia de Fibrilación auricular'
         return context
