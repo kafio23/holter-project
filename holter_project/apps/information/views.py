@@ -30,7 +30,9 @@ class PlotECG(TemplateView):
         diagnosis = get_object_or_404(Diagnosis, pk=kwargs['diag_id'])
         patient   = diagnosis.patient
 
+        signal_file = diagnosis.signal.name
         plot, values = plot_ecg(diagnosis.signal.name)
+        
         if values['FA']:
             result = 'Presencia de Arritmia de Fibrilación auricular'
         else:

@@ -33,7 +33,12 @@
             <li>
                 <a href="{% url 'url_patient_upload' patient.pk %}">
                 <i class="glyphicon glyphicon-upload"></i>
-                Account Settings </a>
+                Upload Signal </a>
+            </li>
+            <li>
+                <a href="{% url 'url_signal_upload' patient.pk %}">
+                <i class="glyphicon glyphicon-cog"></i>
+                Signal Processing </a>
             </li>
             <li>
                 <a href="#" target="_blank">

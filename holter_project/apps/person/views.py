@@ -138,6 +138,13 @@ def patient_upload(request, patient_id):
 
         if form.is_valid():
             myfile   = request.FILES['file']
+            
+            if myfile.name[-4:] == '.csv' :
+                print 'SI'
+            else:
+                messages.error(request, 'Ingresar archivo con formato valido (.csv)')
+                return HttpResponseRedirect(reverse('url_patient_upload', args=[patient_id]))
+
             fs = FileSystemStorage()
             filename = fs.save(path+myfile.name, myfile)
             uploaded_file_url = fs.url(filename)
@@ -176,3 +183,52 @@ def upload_file(request):
     else:
         form = UploadFileForm()
     return render(request, 'upload.html', {'form': form})
+
+
+
+def signal_upload(request, patient_id):
+
+    patient = get_object_or_404(Patient, pk=patient_id)
+    doctors  = Doctor.objects.all()
+    doctor = doctors[0]
+
+    if request.method == 'POST' and request.FILES['file']:
+        
+        form = UploadFileForm(request.POST, request.FILES)
+        path = 'data/'
+
+        if form.is_valid():
+            myfile   = request.FILES['file']
+            
+            if myfile.name[-4:] == '.csv' :
+                print 'SI'
+            else:
+                messages.error(request, 'Ingresar archivo con formato valido (.csv)')
+                return HttpResponseRedirect(reverse('url_patient_upload', args=[patient_id]))
+
+            fs = FileSystemStorage()
+            filename = fs.save(path+myfile.name, myfile)
+            uploaded_file_url = fs.url(filename)
+
+            new_signal = Signal(name=myfile.name, parameters='')
+            new_signal.save()
+            new_diagnosis = Diagnosis(doctor=doctor, patient=patient, signal=new_signal, diagnosis='Ingresar diagnostico:...')
+            new_diagnosis.save()
+
+            messages.success(request, 'Archivo añadido a la base de datos')
+            return HttpResponseRedirect(reverse('url_patient_overview', args=[patient_id]))
+        else:
+            messages.error(request, 'Ingresar archivo con formato valido')
+            return HttpResponseRedirect(reverse('url_patient_view', args=[patient_id]))
+    else:
+        form = UploadFileForm()
+
+    kwargs = {}
+    kwargs['patient']  = patient
+    kwargs['title']    = patient.last_name
+    kwargs['suptitle'] = patient.first_name
+    kwargs['form']     = form
+    kwargs['button']   = 'Upload'
+
+    return render(request, 'parameters_upload.html', kwargs)
+
