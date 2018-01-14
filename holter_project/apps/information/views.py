@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+#from __future__ import unicode_literals
+from __future__ import absolute_import
 
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 
 from .models import Diagnosis, Signal
+from .forms import SignalProcessingForm
 from .utils.ecg_plotter import plot_ecg
+
+from apps.person.models import Patient
 
 # Create your views here.
 def diagnosis_plot(request, patient_id, diag_id):
@@ -52,3 +56,24 @@ class PlotECG(TemplateView):
         context['down_rr_mean']  = values['down_rr_mean']
         
         return context
+
+
+def processing_parameters(request, patient_id):
+
+    patient = get_object_or_404(Patient, pk=patient_id)
+    signals = Signal.objects.filter(diagnosis__patient=patient)
+
+    if request.method=='GET':
+        form = SignalProcessingForm(initial=request.GET,
+                                    signal_choices=signals.values_list('pk', 'name'))
+
+    kwargs = {}
+    kwargs['patient']  = patient
+    kwargs['title']    = 'Processing'
+    kwargs['subtitle'] = 'Parameters'
+    kwargs['form']     = form
+    kwargs['button']   = 'Process'
+
+    return render(request, 'processing_values.html', kwargs)
+    
+    

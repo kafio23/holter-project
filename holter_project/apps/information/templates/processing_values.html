@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load static %}
+{% load bootstrap3 %}
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+
+{% block extra-head %}
+<link href="{% static 'css/bootstrap-datetimepicker.min.css' %}" media="screen" rel="stylesheet">
+{% endblock %}
+
+{% block content-title %}{{title}}{% endblock %}
+{% block content-suptitle %}{{subtitle}}{% endblock %}
+
+{% block content %}
+  {% if form.is_multipart %}
+    <form class="form" enctype="multipart/form-data" method="post" action="{{action}}">
+  {% else %}
+    <form class="form" method="post" action="{{action}}">
+  {% endif %}
+  {% csrf_token %}
+  {# bootstrap_form form layout='horizontal' size='medium' #}
+  {% bootstrap_form form %}
+        <div style="clear: both;"></div>
+
+        <br>  
+
+  {% if extra_button %}
+        <div class="pull-left">
+            <button type="button" class="btn btn-primary" id="bt_{{extra_button}}">{{extra_button}}</button>  
+        </div>
+  {% endif %}
+
+  {% if button %}
+        <div class="pull-right">
+            <button type="button" class="btn btn-primary" onclick="{% if previous %}window.location.replace('{{ previous }}');{% else %}history.go(-1);{% endif %}">{% if cancel %}{{cancel}}{% else %}Cancel{% endif %}</button>
+            <button type="submit" class="btn btn-primary">{{button}}</button>
+        </div>
+  {% endif %}
+    </form>
+{% endblock %}
+
+{% block extra-js %}
+<script src="{% static 'js/moment.min.js' %}"></script>
+<script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+<script type="text/javascript">
+  $(function () {
+      $('#datetimepicker1').datetimepicker();
+      $('#datetimepicker2').datetimepicker();
+  });
+</script>
+{% endblock %}
