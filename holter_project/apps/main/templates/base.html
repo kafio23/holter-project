@@ -19,6 +19,9 @@
     <link href="{% static 'css/bootstrap.min.css' %}" media="all" rel="stylesheet">
     <!-- Optional theme -->
     {% endblock %}
+
+    {% block extra-head %}
+    {% endblock %}
 </head>
 
 <body>
@@ -154,7 +157,7 @@
 
 
 {% block extra-js %}
-{% endblock%}
+{% endblock %}
 
 
 </body>

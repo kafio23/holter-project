@@ -12,26 +12,21 @@ BLOCKTIME_SECS = (
                 (60, '60'),                
                 )
 
-
-class DateRangepickerWidget(forms.widgets.TextInput):
+class DatepickerWidget(forms.widgets.TextInput):
     def render(self, name, value, attrs=None):
-        html = '''<div class="col-md-4 input-group date" id="datetimepicker1" style="float:inherit">
-        <input class="form-control" id="id_start_date" name="start_date" placeholder="Start" title="" type="text">
-        <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-        </div>
-        <br>
-        <div class="col-md-4 input-group date" id="datetimepicker2" style="float:inherit">
-        <input class="form-control" id="id_end_date" name="end_date" placeholder="End" title="" type="text">
-        <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-        </div>'''
+        input_html = super(DatepickerWidget, self).render(name, value, attrs)
+        html = '''<div class="col-md-4 input-group date" id="{}">'''.format(name)
+        html += input_html+'<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span></div>'
         return mark_safe(html)
+
 
 
 class SignalProcessingForm(forms.Form):
 
     signals    = forms.ChoiceField(label="Signals")
     blocktime  = forms.ChoiceField(label="Secs per Block", choices=BLOCKTIME_SECS) #blocktime  = forms.IntegerField(label="Segundos por Bloque", min_value=10)
-    range_date = forms.DateTimeField(label="DateTime Selector")
+    start_date = forms.DateTimeField(label="Start Date")
+    end_date = forms.DateTimeField(label="End Date")
 
     def __init__(self, *args, **kwargs):
         extra_fields = kwargs.pop('extra_fields', [])
@@ -39,4 +34,5 @@ class SignalProcessingForm(forms.Form):
         super(SignalProcessingForm, self).__init__(*args, **kwargs)
 
         self.fields['signals'].choices = signal_choices
-        self.fields['range_date'].widget = DateRangepickerWidget()
+        self.fields['start_date'].widget = DatepickerWidget(self.fields['start_date'].widget.attrs)
+        self.fields['end_date'].widget = DatepickerWidget(self.fields['end_date'].widget.attrs)

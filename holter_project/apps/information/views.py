@@ -67,6 +67,17 @@ def processing_parameters(request, patient_id):
         form = SignalProcessingForm(initial=request.GET,
                                     signal_choices=signals.values_list('pk', 'name'))
 
+    if request.method=='POST':
+        data = {'signals': request.POST['signals'], 'blocktime': request.POST['blocktime'], 
+                'start_date': request.POST['start_date'], 'end_date': request.POST['end_date']}
+       
+        form = SignalProcessingForm(data)
+        
+        #if form.is_valid():
+            #print form
+        #return redirect('url_processing_plot', patient_id=patient.pk, signal_id=)
+        pass
+
     kwargs = {}
     kwargs['patient']  = patient
     kwargs['title']    = 'Processing'
@@ -75,5 +86,13 @@ def processing_parameters(request, patient_id):
     kwargs['button']   = 'Process'
 
     return render(request, 'processing_values.html', kwargs)
-    
+
+
+def processing_plot(request, patient_id, signal_id):
+
+    patient = get_object_or_404(Patient, pk=patient_id)
+    signals = get_object_or_404(Signal, pk=signal_id)
+
+    return HttpResponse("Hello, world. You're at the polls index.")
+#return render(request, 'processing_plot.html', kwargs)
     
