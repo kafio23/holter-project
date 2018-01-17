@@ -5,5 +5,8 @@
 *vscode
 *000*
 .DS_Store
+*.csv
+*.jpg
+db.sqlite3
 
 # https://gist.github.com/octocat/9257657
