@@ -2,13 +2,14 @@
 #from __future__ import unicode_literals
 from __future__ import absolute_import
 
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import TemplateView
+from django.core.urlresolvers import reverse
 
 from .models import Diagnosis, Signal
 from .forms import SignalProcessingForm
-from .utils.ecg_plotter import plot_ecg
+from .utils.ecg_plotter import plot_ecg, signal_processing
 
 from apps.person.models import Patient
 
@@ -70,14 +71,7 @@ def processing_parameters(request, patient_id):
     if request.method=='POST':
         data = {'signals': request.POST['signals'], 'blocktime': request.POST['blocktime'], 
                 'start_date': request.POST['start_date'], 'end_date': request.POST['end_date']}
-       
-        form = SignalProcessingForm(data)
-        
-        #if form.is_valid():
-            #print form
-        #return redirect('url_processing_plot', patient_id=patient.pk, signal_id=)
         pass
-
     kwargs = {}
     kwargs['patient']  = patient
     kwargs['title']    = 'Processing'
@@ -94,5 +88,4 @@ def processing_plot(request, patient_id, signal_id):
     signals = get_object_or_404(Signal, pk=signal_id)
 
     return HttpResponse("Hello, world. You're at the polls index.")
-#return render(request, 'processing_plot.html', kwargs)
     

@@ -139,8 +139,8 @@ def patient_upload(request, patient_id):
         if form.is_valid():
             myfile   = request.FILES['file']
             
-            if myfile.name[-4:] == '.csv' :
-                print 'SI'
+            if myfile.name[-4:] == '.csv' or myfile.name[-4:] == '.txt' :
+                print 'SI .cvs or .txt'
             else:
                 messages.error(request, 'Ingresar archivo con formato valido (.csv)')
                 return HttpResponseRedirect(reverse('url_patient_upload', args=[patient_id]))

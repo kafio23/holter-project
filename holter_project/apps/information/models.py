@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 
 from django.db import models
+from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
 from apps.person.models import Doctor, Patient
 
@@ -19,6 +20,12 @@ class Signal(models.Model):
 
     def __str__(self):
         return u'%s, %s' % (self.name, self.acquisition_date)
+
+    def get_diagnosis(self):
+        diagnosis=get_object_or_404(Diagnosis, signal=self)
+        patient = diagnosis.patient
+        return patient.pk
+
 
 
 class Diagnosis(models.Model):
