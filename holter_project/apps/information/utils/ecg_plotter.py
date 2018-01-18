@@ -85,8 +85,8 @@ def plot_ecg(file_name):
     y = ecg_data
 
     ## Picos Bajos
-    peaks_index = detect_peaks(-ecg_data, mph=0.6, mpd=0.150, show=True)
-    ecg_peaks = -ecg_data[peaks_index]
+    peaks_index = detect_peaks(ecg_data, mph=0.6, mpd=0.150, show=True)#detect_peaks(-ecg_data, mph=0.6, mpd=0.150, show=True)
+    ecg_peaks = ecg_data[peaks_index]#-ecg_data[peaks_index]
     tm_peaks = x[peaks_index]
     tm_peaks = np.array(tm_peaks)
     print 'Indices: ', peaks_index
@@ -230,7 +230,7 @@ def signal_processing_backup(file_name):
     y = ecg_data
 
     ## Picos Bajos
-    peaks_index = detect_peaks(-ecg_data, mph=0.6, mpd=0.150, show=True)
+    peaks_index = detect_peaks(-ecg_data, mph=0.4, mpd=0.150, show=True)
     ecg_peaks = -ecg_data[peaks_index]
     tm_peaks = x[peaks_index]
     tm_peaks = np.array(tm_peaks)
