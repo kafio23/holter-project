@@ -308,17 +308,17 @@ def signal_processing(file_name):
     df = pd.read_csv(settings.MEDIA_ROOT+path+file_name)
 
     try:
-        x=df['x']
-        y=df['y']
+        x=df['X']
+        y=df['Y']
     except:
         df = pd.read_csv(settings.MEDIA_ROOT+path+file_name, sep=';')
 
-    x=df['x']
-    y=df['y']
+    x=df['X']
+    y=df['Y']
     
     #-Agregado para aumentar tiempo 04-01-2018
     #print x
-    print 'Aqui comienza AGREGADO'
+    """print 'Aqui comienza AGREGADO'
     print x.__class__.__name__
     print 'x[2999]= ', x[2999]
     print 'x[3000]= ', x[3000]
@@ -355,10 +355,28 @@ def signal_processing(file_name):
         x[xx]  = x[xx] + 150
     for xx in range(48000,51000):
         x[xx]  = x[xx] + 160
-        
+    """
+    #-----------Agregado el 18 de enero 2018----------
+    x           = np.array(x)
+    y           = np.array(y)
     
+    x           = x-1             # Para que comience en 0 (cero) segundos
+
+    x_inicial   = x[0]    # Inicio de muestra (segundos)
+    x_final     = x[-1]     # Fin de muestra (segundos)
     
-    #-----------------------------------------
+    total_tiempo = x_final-x_inicial 
+    fs           = 300.0
+    sec_sample   = 1.0/fs
+
+    tiempo_muestra = []
+    multi          = 0
+
+    for yy in  y:
+        tiempo_muestra.append(sec_sample*multi)
+        multi += 1
+    x = np.array(tiempo_muestra)
+    #--------------------------------------------------
 
     #---------------- Processing Signal----------------
     ## Filtro Pasa-Bajas
@@ -375,8 +393,8 @@ def signal_processing(file_name):
     y = ecg_data
 
     ## Picos Bajos
-    peaks_index = detect_peaks(-ecg_data, mph=0.6, mpd=0.150, show=True)
-    ecg_peaks = -ecg_data[peaks_index]
+    peaks_index = detect_peaks(ecg_data, mph=0.6, mpd=0.150, show=True)
+    ecg_peaks = ecg_data[peaks_index]
     tm_peaks = x[peaks_index]
     tm_peaks = np.array(tm_peaks)
     print 'Indices: ', peaks_index
@@ -392,7 +410,7 @@ def signal_processing(file_name):
         rateBPM_sum = sum(rateBPM_values)
     
     ## BPM
-    rateBPM = len(tm_peaks)*1.0 / (x[x.last_valid_index()]-x[0]) * 60.0
+    rateBPM = len(tm_peaks)*1.0 / (x[-1]-x[0]) * 60.0
     print 'rateBPM: ', rateBPM
     print 'Valores rateBPM: ', rateBPM_values
 
