@@ -13,6 +13,16 @@ import math
 
 from detect_peaks import detect_peaks
 
+def frange(x, y, jump):
+    '''
+        Crea una lista de numeros para la division
+        de la senal por ploques de jump segundos
+    '''
+    while x < y:
+        yield x
+        x += jump
+
+
 def plot_ecg(file_name):
 
     path = '/data/'
@@ -490,6 +500,9 @@ def signal_processing(file_name):
     # Entre 1000, porque asi son dados los valores
     x = np.array(x)
     y = np.array(y)
+    # Para empezar en el segundo 5
+    x = x[1500:-1]
+    y = y[1500:-1]
     x = (x/1000.0)-1          # Para empezar desde 0 segundos
     y = y/1000.0
 
@@ -529,6 +542,7 @@ def signal_processing(file_name):
     # Por encima de 10 segundos (tiempo total)
     segundos_bloque = 10.0
     sobra_bloque    = tiempo_total/segundos_bloque
+    bloques         = list(frange(x_inicio, x_final, segundos_bloque))
 
     # contador de figuras
     cont_fig = 2
@@ -544,8 +558,77 @@ def signal_processing(file_name):
     # Para saber si plotear ultima parte
     ploteosiono = False
 
-    # PROCESAMIENTOS
+    # PROCESAMIENTO:
+    if tiempo_total > segundos_bloque:    # Por encima de  10 segundos (tiempo total)
+        for i in bloques:
+            # EVITAR bloque menor a 5 segundos
+            ultimate_i = i + segundos_bloque     # Proximo bloque
+            if (ultimate_i < x_final) and ((x_final-ultimate_i) < (segundos_bloque/2)):
+
+                # Datos de BLOQUE
+                indice_mayores = (i <= t)                       # Para t
+                t_bloque_parcial = t[indice_mayores]            # Para y
+                indice_menores = (t_bloque_parcial <= x_final)
+                t_bloque = t_bloque_parcial[indice_menores]     # Para t
+                y_bloque = y_bloque_parcial[indice_menores]     # Para y
+
+                last_loop = True
+            else:
+                # Datos de BLOQUE
+                indice_mayores = (i <= t)
+                t_bloque_parcial = t[indice_mayores]            # Para t
+                y_bloque_parcial = y[indice_mayores]            # Para y
+                indice_menores = (t_bloque_parcial < (i + segundos_bloque))
+                t_bloque = t_bloque_parcial[indice_menores]     # Para t
+                y_bloque = y_bloque_parcial[indice_menores]     # Para y
+
+             
+            # Filtro SALVITZKY para reducir ruido (y_smooth)
+            order_sgolay = 7
+            framelen = 21
+            # Asegurar que la cantidad de y_bloque es mayor que framelen
+            if not(len(y_bloque) > framelen):
+                order_sgolay = len(y_bloque)-2
+                framelen = len(y_bloque)-1
+                # Solo is es odd (impar) : order_sgolay < framelen
+                if (framelen%2) != 1:
+                    order_sgolay = order_sgolay-1;
+                    framelen = framelen-1
+                print('Se cambio el orden de Savitzky Golay\n')
+            
+            print '?????'
+            print y_bloque.size
+            print order_sgolay
+            print framelen
+            y_smooth = signal.savgol_filter(y_bloque, framelen, order_sgolay)
+            
+
+            # DETREND (Quitar la tendecia de la senal)   (y_detrend)
+            p = polyfit((np.arange(len(y))),y,6)
+            f_y = np.polyval(p,(np.arange(len(y))))
+            y_detrend = y_smooth - f_y
+
+
+            # MULTIPLICACION por si misma
+            y_var = y_detrend * y_detrend
+            y_var = y_var * 10              # 10 (valor a milisegundos)
+            y_normal = y_var
+
+            # NORMALIZAR             (y_normal)
+            #y_normal = y_detrend/max(y_detrend)
+
+            # DETECCION de PICOS
+            y_max = max(y_normal)
+            # umbral minimo del pico de la senal
+            min_peak_value = y_max*0.4
+            # umbral minimo de pico (TEORICO)
+            min_peak_value_theory = 0.2
+
+
+    else:
+        print('No se adquirio suficiente tiempo')
     
+    ##################################################
     #---------------- Processing Signal----------------
     ## Filtro Pasa-Bajas
     y=signal.savgol_filter(y,21,7)
