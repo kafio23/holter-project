@@ -9,6 +9,7 @@ from scipy import signal
 from scipy.signal import find_peaks_cwt
 from numpy import polyfit
 import numpy as np
+import math
 
 from detect_peaks import detect_peaks
 
@@ -302,7 +303,7 @@ def signal_processing_backup(file_name):
 
 
 #-----------PROCESSING PLOT-------------
-def signal_processing(file_name):
+def signal_processing_backupULTIMO(file_name):
 
     path = '/data/'
     df = pd.read_csv(settings.MEDIA_ROOT+path+file_name)
@@ -378,6 +379,173 @@ def signal_processing(file_name):
     x = np.array(tiempo_muestra)
     #--------------------------------------------------
 
+    #---------------- Processing Signal----------------
+    ## Filtro Pasa-Bajas
+    y=signal.savgol_filter(y,21,7)
+
+    ## Detrend
+    p = polyfit((np.arange(len(y))),y,6)
+    f_y = np.polyval(p,(np.arange(len(y))))
+    ecg_data = y - f_y
+    y = ecg_data
+
+    ## Normalizar
+    ecg_data = ecg_data/max(abs(ecg_data))
+    y = ecg_data
+
+    ## Picos Bajos
+    peaks_index = detect_peaks(ecg_data, mph=0.6, mpd=0.150, show=True)
+    ecg_peaks = ecg_data[peaks_index]
+    tm_peaks = x[peaks_index]
+    tm_peaks = np.array(tm_peaks)
+    print 'Indices: ', peaks_index
+    print 'Picos Bajos: ', ecg_peaks
+    
+    ## Segundos entre intervalos
+    rateBPM_values = []
+    rateBPM_sum    = 0
+    if len(peaks_index) > 9:  #minimo 10 ciclos
+        for i in range(1,len(peaks_index)):
+            t_dif = tm_peaks[i]-tm_peaks[i-1]
+            rateBPM_values.append(t_dif) 
+        rateBPM_sum = sum(rateBPM_values)
+    
+    ## BPM
+    rateBPM = len(tm_peaks)*1.0 / (x[-1]-x[0]) * 60.0
+    print 'rateBPM: ', rateBPM
+    print 'Valores rateBPM: ', rateBPM_values
+
+    ## Mean R-R Interval
+    rrmean_values = []
+    rr_mean       = 0
+    for i in range(0,len(rateBPM_values)):
+        rr_mean = 0.75 * rr_mean + 0.25 * rateBPM_values[i]
+        rrmean_values.append(rr_mean)
+
+    up_rr_mean = np.where(rateBPM_values>=(rr_mean*1.15))
+    down_rr_mean = np.where(rateBPM_values<(rr_mean*0.85))
+    print 'RR-MEAN: ', rr_mean
+    print 'UP-rr-mean', up_rr_mean
+    print 'DOWN-rr-mean', down_rr_mean
+
+    ## Resultado
+    values = {'FA': False}
+    if np.any(up_rr_mean):
+        values['FA'] = True
+    if np.any(down_rr_mean):
+        values['FA'] = True
+    
+    values['rr_mean'] = rr_mean
+    values['up_rr_mean'] = rr_mean*1.15
+    values['down_rr_mean'] = rr_mean*0.85
+
+    values['rateBPM'] = rateBPM
+    values['cycles_num'] = len(peaks_index)
+    values['cycles'] = []
+    cycles = []
+    for i in range(0,len(peaks_index)-1):
+        cycles.append('Intervalo R-R #'+str(i+1)+' - #'+str(i+2) +': '+str(rateBPM_values[i]))
+        
+    values['cycles'] = cycles
+    print cycles
+    #--------------------------------------------------
+
+    trace1 = graph_objs.Scatter(
+                        x=x, y=y, # Data
+                        mode='lines', name='signal' # Additional options
+                        )
+
+    layout = graph_objs.Layout(title='ECG ('+file_name+')',
+                   plot_bgcolor='rgb(230, 230,230)')
+                   
+    data = [trace1]
+    fig = graph_objs.Figure(data=data, layout=layout)
+    plot_div = plot(fig, output_type='div', include_plotlyjs=False)
+    return plot_div, values
+
+
+
+#----------------------------------------------------------
+# ESTE ES EL SCRIPT CON LA NUEVA CONF
+#-----------PROCESSING PLOT-------------
+def signal_processing(file_name):
+
+    ## ---------------- Se adquiere la senal -----------------
+    path = '/data/'
+    df = pd.read_csv(settings.MEDIA_ROOT+path+file_name)
+
+    try:
+        x=df['X']
+        y=df['Y']
+    except:
+        df = pd.read_csv(settings.MEDIA_ROOT+path+file_name, sep=';')
+
+    x=df['X']
+    y=df['Y']
+    
+    # Frecuencia de Muestro
+    Fs = 300
+
+    ## ---------- ACONDICIONAMIENTO DE LOS VALORES X ----------
+    # Entre 1000, porque asi son dados los valores
+    x = np.array(x)
+    y = np.array(y)
+    x = (x/1000.0)-1          # Para empezar desde 0 segundos
+    y = y/1000.0
+
+    # Inicio de muestra (segundos)
+    x_inicio1 = x[0]
+    x_decimal = x_inicio1-math.floor(x_inicio1)
+    x_inicio = (x_decimal * 0.999) / 0.299  + math.floor(x_inicio1)    ## PREGUNTAR
+    # Final de muestra (segundos)
+    x_final1 = x[-1]
+    x_decimal_fin = x_final1 - math.floor(x_final1)
+    x_final = (x_decimal_fin * 0.999) / 0.299 + math.floor(x_final1)   ## PREGUNTAR
+    
+    # TIEMPO Total de la SENAL
+    tiempo_total = x_final - x_inicio
+
+    # Formamos el axis x (segundos) (CON ESTO PROCESAMOS)
+    t = np.linspace(x_inicio, x_final, y.size, endpoint=True)
+
+    ## -------------------- Datos ---------------------
+    # BPM (Latidos por MINUTO (60 segundos))
+    taquicardia = 100.0                   # Mayor que
+    bradicardia = 60.0                    # Menor que
+    # Separacion de PICOS (1 Hz - 1.667 Hz (2 Hz))
+    taquicardia_seg = 60/taquicardia    # Menor que 0.6 segundos
+    bradicardia_seg = 60/bradicardia    # Mayor que 1.0 segundos
+    # En milisegundos
+    taquicardia_mili  = 600.0             # Menor que 600 milisegundos
+    bradicardia_mili  = 1000.0            # Mayor que 1000 milisegundos
+
+    ## ------------- CONVERSION DE BITS ---------------  
+    num_bits = 12.0
+    max_volt = 3.3
+    y = (max_volt * y)/(2^int(num_bits))
+    #--------------------------------------------------
+
+    ## --------------- PROCESAMIENTO -----------------
+    # Por encima de 10 segundos (tiempo total)
+    segundos_bloque = 10.0
+    sobra_bloque    = tiempo_total/segundos_bloque
+
+    # contador de figuras
+    cont_fig = 2
+
+    # ultimo loop
+    last_loop = False
+
+    # Para R-R
+    rr_values_all      = []
+    rr_mean_values_all = []
+    rr_mean_prom       = 0
+
+    # Para saber si plotear ultima parte
+    ploteosiono = False
+
+    # PROCESAMIENTOS
+    
     #---------------- Processing Signal----------------
     ## Filtro Pasa-Bajas
     y=signal.savgol_filter(y,21,7)
