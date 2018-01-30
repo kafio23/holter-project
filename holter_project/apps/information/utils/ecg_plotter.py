@@ -596,22 +596,18 @@ def signal_processing(file_name):
                     framelen = framelen-1
                 print('Se cambio el orden de Savitzky Golay\n')
             
-            print '?????'
-            print y_bloque.size
-            print order_sgolay
-            print framelen
             y_smooth = signal.savgol_filter(y_bloque, framelen, order_sgolay)
             
 
             # DETREND (Quitar la tendecia de la senal)   (y_detrend)
-            p = polyfit((np.arange(len(y))),y,6)
-            f_y = np.polyval(p,(np.arange(len(y))))
+            p = polyfit((np.arange(len(y_smooth))),y_smooth,6)
+            f_y = np.polyval(p,(np.arange(len(y_smooth))))
             y_detrend = y_smooth - f_y
 
 
             # MULTIPLICACION por si misma
             y_var = y_detrend * y_detrend
-            y_var = y_var * 10              # 10 (valor a milisegundos)
+            y_var = y_var * 100              # 10 (valor a milisegundos)
             y_normal = y_var
 
             # NORMALIZAR             (y_normal)
@@ -619,10 +615,99 @@ def signal_processing(file_name):
 
             # DETECCION de PICOS
             y_max = max(y_normal)
+            print y_max
             # umbral minimo del pico de la senal
             min_peak_value = y_max*0.4
+            
             # umbral minimo de pico (TEORICO)
             min_peak_value_theory = 0.2
+            # Los picos deben ser si o si mayores a 0.29
+            if not(min_peak_value >= min_peak_value_theory):
+                print('El pico minimio es menor a '+str(min_peak_value_theory))
+                min_peak_value = min_peak_value_theory
+            # Picos: valores
+            y_peaks = detect_peaks(y_normal, mph=min_peak_value, mpd=0.3, show=True)    # primer valor probado 0.150
+            print 'HAHAHAH'
+            print y_peaks
+            if y_peaks == []:
+                break     
+            t_peaks = t_bloque[y_peaks]           
+            y_peaks = y_normal[y_peaks]
+        
+            
+            # RR-VARIABILITY
+            RRv_suma = 0
+            RRv_variamucho = False
+            minimo_variacion = 0.6
+
+            # RR - INTERVALOS
+            rr_values    = []
+            rr_promedio  = 0
+            
+            # RR-MEAN
+            fuerade_rrmean = False
+
+            # MINIMO 10 picos
+            if (len(y_peaks)> 9):
+                # RR - VARIABILITY
+                for i2 in range(len(y_peaks)-2):
+                    # No deberia haber variacion (RRv = 0)
+                    RRv21 = (t_peaks[i2+1]-t_peaks[i2])
+                    RRv32 = (t_peaks[i2+2]-t_peaks[i2+1])
+                    RRv_suma = RRv_suma + abs(RRv32 - RRv21)
+                    # Intervalos RR varian mucho?
+                    if RRv_suma > minimo_variacion:
+                        RRv_variamucho = True
+
+                # RR - INTERVALOS (segundos)
+                for i3 in range(2,len(t_peaks)):
+                    # se guarda valor intervalo RR
+                    pulso_ant = t_peaks[i3-1]
+                    pulso_act = t_peaks[i3]
+                    rr_values.append(pulso_act - pulso_ant)
+                
+                rr_suma = sum(rr_values)
+                rr_promedio = sum(rr_values)/len(t_peaks)
+                print('RR valores SUMA: '+str(rr_suma))
+                print('RR Intervalo promedio: '+str(rr_promedio))
+                # Asignamos al rr_values total
+                rr_values_all.append(rr_values)
+
+                # MEAN R-R Interval (se toma rr_values anterior)
+                rrmean_values = []
+                rr_mean       = 0
+                for i4 in range(1,len(rr_values)):
+                    rr_mean = 0.75*rr_mean+0.25*rr_values[i4]
+                    rrmean_values.append(rr_mean)
+
+                # Valores R-R Limites
+                up_rr_mean   = rr_values>=(rr_mean*1.15)
+                down_rr_mean = rr_values<(rr_mean*0.85)
+                if (len(up_rr_mean) + len(down_rr_mean)) > 1:
+                    fuerade_rrmean = True
+
+                # Asignamos al rr_mean valores totales
+                rr_mean_values_all.append(rr_mean)
+
+                # BEATS PER MIMUNTE
+                rateBPM = math.floor(len(y_peaks)*60/(t_bloque[-1]-t_bloque[1]))
+                print('BPM: '+ str(rateBPM))
+
+            if (fuerade_rrmean==True) or (RRv_variamucho==True):
+                print('Presenta FA ' + str(rateBPM))
+            else:
+                print('No presenta FA')
+
+            # Para conteo de figuras
+            cont_fig = cont_fig+1
+            
+            # LOOP ULTIMO
+            if last_loop:
+                break
+        
+        ##----------- PLOT R-R Mean ------------
+        rr_mean_prom = sum(rr_mean_values_all)/len(rr_mean_values_all);
+
 
 
     else:
@@ -648,8 +733,8 @@ def signal_processing(file_name):
     ecg_peaks = ecg_data[peaks_index]
     tm_peaks = x[peaks_index]
     tm_peaks = np.array(tm_peaks)
-    print 'Indices: ', peaks_index
-    print 'Picos Bajos: ', ecg_peaks
+    #print 'Indices: ', peaks_index
+    #print 'Picos Bajos: ', ecg_peaks
     
     ## Segundos entre intervalos
     rateBPM_values = []
@@ -662,8 +747,8 @@ def signal_processing(file_name):
     
     ## BPM
     rateBPM = len(tm_peaks)*1.0 / (x[-1]-x[0]) * 60.0
-    print 'rateBPM: ', rateBPM
-    print 'Valores rateBPM: ', rateBPM_values
+    #print 'rateBPM: ', rateBPM
+    #print 'Valores rateBPM: ', rateBPM_values
 
     ## Mean R-R Interval
     rrmean_values = []
@@ -674,9 +759,9 @@ def signal_processing(file_name):
 
     up_rr_mean = np.where(rateBPM_values>=(rr_mean*1.15))
     down_rr_mean = np.where(rateBPM_values<(rr_mean*0.85))
-    print 'RR-MEAN: ', rr_mean
-    print 'UP-rr-mean', up_rr_mean
-    print 'DOWN-rr-mean', down_rr_mean
+    #print 'RR-MEAN: ', rr_mean
+    #print 'UP-rr-mean', up_rr_mean
+    #print 'DOWN-rr-mean', down_rr_mean
 
     ## Resultado
     values = {'FA': False}
@@ -697,7 +782,7 @@ def signal_processing(file_name):
         cycles.append('Intervalo R-R #'+str(i+1)+' - #'+str(i+2) +': '+str(rateBPM_values[i]))
         
     values['cycles'] = cycles
-    print cycles
+    #print cycles
     #--------------------------------------------------
 
     trace1 = graph_objs.Scatter(
