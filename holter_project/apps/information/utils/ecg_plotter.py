@@ -2,6 +2,7 @@
 
 import pandas as pd
 from plotly import graph_objs
+from plotly import tools
 from plotly.offline import plot
 from django.conf import settings
 
@@ -671,7 +672,8 @@ def signal_processing(file_name):
                 print('RR valores SUMA: '+str(rr_suma))
                 print('RR Intervalo promedio: '+str(rr_promedio))
                 # Asignamos al rr_values total
-                rr_values_all.append(rr_values)
+                for rr_val in rr_values:                ## REVISAR!!
+                    rr_values_all.append(rr_val)
 
                 # MEAN R-R Interval (se toma rr_values anterior)
                 rrmean_values = []
@@ -681,8 +683,10 @@ def signal_processing(file_name):
                     rrmean_values.append(rr_mean)
 
                 # Valores R-R Limites
-                up_rr_mean   = rr_values>=(rr_mean*1.15)
-                down_rr_mean = rr_values<(rr_mean*0.85)
+                up_rr_mean = np.where(rr_values>=(rr_mean*1.15))
+                down_rr_mean = np.where(rr_values<(rr_mean*0.85))
+                #up_rr_mean   = rr_values>=(rr_mean*1.15)
+                #down_rr_mean = rr_values<(rr_mean*0.85)
                 if (len(up_rr_mean) + len(down_rr_mean)) > 1:
                     fuerade_rrmean = True
 
@@ -706,7 +710,7 @@ def signal_processing(file_name):
                 break
         
         ##----------- PLOT R-R Mean ------------
-        rr_mean_prom = sum(rr_mean_values_all)/len(rr_mean_values_all);
+        rr_mean_prom = sum(rr_mean_values_all)/len(rr_mean_values_all)
 
 
 
@@ -757,8 +761,8 @@ def signal_processing(file_name):
         rr_mean = 0.75 * rr_mean + 0.25 * rateBPM_values[i]
         rrmean_values.append(rr_mean)
 
-    up_rr_mean = np.where(rateBPM_values>=(rr_mean*1.15))
-    down_rr_mean = np.where(rateBPM_values<(rr_mean*0.85))
+    #up_rr_mean = np.where(rateBPM_values>=(rr_mean*1.15))
+    #down_rr_mean = np.where(rateBPM_values<(rr_mean*0.85))
     #print 'RR-MEAN: ', rr_mean
     #print 'UP-rr-mean', up_rr_mean
     #print 'DOWN-rr-mean', down_rr_mean
@@ -792,8 +796,38 @@ def signal_processing(file_name):
 
     layout = graph_objs.Layout(title='ECG ('+file_name+')',
                    plot_bgcolor='rgb(230, 230,230)')
+    print 'ESTO',rr_values_all[5]
+    ## ----------------- R-R Interval Plot --------------
+    x_values = range(50, len(rr_values_all))
+    trace2 = graph_objs.Scatter(
+        x=x_values,
+        y=rr_values_all,
+        mode='markers',
+        name='Intervalos R-R'
+    )
+    trace3 = graph_objs.Scatter(
+        x=[50, len(rr_values_all)],
+        y=[rr_mean_prom*1.15, rr_mean_prom*1.15],
+        name='Limite R-R'
+    )
+    trace4 = graph_objs.Scatter(
+        x=[50, len(rr_values_all)],
+        y=[rr_mean_prom*0.85, rr_mean_prom*0.85],
+        name='Limite R-R'
+    )
+    # -----------------------------------------------------
                    
-    data = [trace1]
-    fig = graph_objs.Figure(data=data, layout=layout)
+    data = [trace1, trace2, trace3]
+    fig = tools.make_subplots(rows=2, cols=1, subplot_titles=('ECG', 'R-R Variabilidad'))
+    fig.append_trace(trace1, 1, 1)
+    fig.append_trace(trace2, 2, 1)
+    fig.append_trace(trace3, 2, 1)
+    fig.append_trace(trace4, 2, 1)
+    fig['layout']['xaxis1'].update(title='Segundos')
+    fig['layout']['yaxis1'].update(title='Milivoltios')
+    fig['layout']['plot_bgcolor']='rgb(230, 230,230)'
+    fig['layout']['xaxis2'].update(title='Bloques')
+    fig['layout']['yaxis2'].update(title='R-R Intervalos')
+    #fig = graph_objs.Figure(data=data, layout=layout)
     plot_div = plot(fig, output_type='div', include_plotlyjs=False)
     return plot_div, values
