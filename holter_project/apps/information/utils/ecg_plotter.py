@@ -708,7 +708,7 @@ def signal_processing(file_name):
             cont_fig = cont_fig+1
             
             # Para formar el Y FINAL
-            for y_i in y_var:
+            for y_i in y_detrend:
                 y_final.append(y_i)
 
             # LOOP ULTIMO
