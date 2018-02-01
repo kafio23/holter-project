@@ -506,7 +506,7 @@ def signal_processing(file_name):
     y = y[1500:-1]
     x = (x/1000.0)-1          # Para empezar desde 0 segundos
     y = y/1000.0
-
+    
     # Inicio de muestra (segundos)
     x_inicio1 = x[0]
     x_decimal = x_inicio1-math.floor(x_inicio1)
@@ -521,6 +521,8 @@ def signal_processing(file_name):
 
     # Formamos el axis x (segundos) (CON ESTO PROCESAMOS)
     t = np.linspace(x_inicio, x_final, y.size, endpoint=True)
+    # El Y para PLOT     (y_final)
+    y_final = []
 
     ## -------------------- Datos ---------------------
     # BPM (Latidos por MINUTO (60 segundos))
@@ -705,6 +707,10 @@ def signal_processing(file_name):
             # Para conteo de figuras
             cont_fig = cont_fig+1
             
+            # Para formar el Y FINAL
+            for y_i in y_var:
+                y_final.append(y_i)
+
             # LOOP ULTIMO
             if last_loop:
                 break
@@ -712,7 +718,9 @@ def signal_processing(file_name):
         ##----------- PLOT R-R Mean ------------
         rr_mean_prom = sum(rr_mean_values_all)/len(rr_mean_values_all)
 
-
+        print 'RR', rr_mean_values_all
+        print 'len(rr): ', len(rr_mean_values_all)
+        print 'RR mean prom',rr_mean_prom
 
     else:
         print('No se adquirio suficiente tiempo')
@@ -750,16 +758,16 @@ def signal_processing(file_name):
         rateBPM_sum = sum(rateBPM_values)
     
     ## BPM
-    rateBPM = len(tm_peaks)*1.0 / (x[-1]-x[0]) * 60.0
+    #rateBPM = len(tm_peaks)*1.0 / (x[-1]-x[0]) * 60.0
     #print 'rateBPM: ', rateBPM
     #print 'Valores rateBPM: ', rateBPM_values
 
     ## Mean R-R Interval
-    rrmean_values = []
-    rr_mean       = 0
-    for i in range(0,len(rateBPM_values)):
-        rr_mean = 0.75 * rr_mean + 0.25 * rateBPM_values[i]
-        rrmean_values.append(rr_mean)
+    #rrmean_values = []
+    #rr_mean       = 0
+    #for i in range(0,len(rateBPM_values)):
+    #    rr_mean = 0.75 * rr_mean + 0.25 * rateBPM_values[i]
+    #    rrmean_values.append(rr_mean)
 
     #up_rr_mean = np.where(rateBPM_values>=(rr_mean*1.15))
     #down_rr_mean = np.where(rateBPM_values<(rr_mean*0.85))
@@ -782,16 +790,16 @@ def signal_processing(file_name):
     values['cycles_num'] = len(peaks_index)
     values['cycles'] = []
     cycles = []
-    for i in range(0,len(peaks_index)-1):
-        cycles.append('Intervalo R-R #'+str(i+1)+' - #'+str(i+2) +': '+str(rateBPM_values[i]))
+    #for i in range(0,len(peaks_index)-1):
+    #    cycles.append('Intervalo R-R #'+str(i+1)+' - #'+str(i+2) +': '+str(rateBPM_values[i]))
         
-    values['cycles'] = cycles
+    #values['cycles'] = cycles
     #print cycles
     #--------------------------------------------------
 
     trace1 = graph_objs.Scatter(
-                        x=x, y=y, # Data
-                        mode='lines', name='signal' # Additional options
+                        x=t, y=y_final, 
+                        mode='lines', name='signal'
                         )
 
     layout = graph_objs.Layout(title='ECG ('+file_name+')',
