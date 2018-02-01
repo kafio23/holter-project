@@ -24,157 +24,11 @@ def frange(x, y, jump):
         x += jump
 
 
-def plot_ecg(file_name):
 
-    path = '/data/'
-    df = pd.read_csv(settings.MEDIA_ROOT+path+file_name)
-
-    try:
-        x=df['x']
-        y=df['y']
-    except:
-        df = pd.read_csv(settings.MEDIA_ROOT+path+file_name, sep=';')
-
-    x=df['x']
-    y=df['y']
-    
-    #-Agregado para aumentar tiempo 04-01-2018
-    #print x
-    print 'Aqui comienza AGREGADO'
-    print x.__class__.__name__
-    print 'x[2999]= ', x[2999]
-    print 'x[3000]= ', x[3000]
-    x1  = 2999+1
-    for xx in range(3000,6000):
-        x[xx]  = x[xx] + 10
-    for xx in range(6000,9000):
-        x[xx]  = x[xx] + 20
-    for xx in range(9000,12000):
-        x[xx]  = x[xx] + 30
-    for xx in range(12000,15000):
-        x[xx]  = x[xx] + 40
-    for xx in range(15000,18000):
-        x[xx]  = x[xx] + 50
-    for xx in range(18000,21000):
-        x[xx]  = x[xx] + 60
-    for xx in range(21000,24000):
-        x[xx]  = x[xx] + 70
-    for xx in range(24000,27000):
-        x[xx]  = x[xx] + 80
-    for xx in range(27000,30000):
-        x[xx]  = x[xx] + 90
-    for xx in range(30000,33000):
-        x[xx]  = x[xx] + 100
-    for xx in range(33000,36000):
-        x[xx]  = x[xx] + 110
-    for xx in range(36000,39000):
-        x[xx]  = x[xx] + 120
-    for xx in range(39000,42000):
-        x[xx]  = x[xx] + 130
-    for xx in range(42000,45000):
-        x[xx]  = x[xx] + 140
-    for xx in range(45000,48000):
-        x[xx]  = x[xx] + 150
-    for xx in range(48000,51000):
-        x[xx]  = x[xx] + 160
-        
-    
-    
-    #-----------------------------------------
-
-    #---------------- Processing Signal----------------
-    ## Filtro Pasa-Bajas
-    y=signal.savgol_filter(y,21,7)
-
-    ## Detrend
-    p = polyfit((np.arange(len(y))),y,6)
-    f_y = np.polyval(p,(np.arange(len(y))))
-    ecg_data = y - f_y
-    y = ecg_data
-
-    ## Normalizar
-    ecg_data = ecg_data/max(abs(ecg_data))
-    y = ecg_data
-
-    ## Picos Bajos
-    peaks_index = detect_peaks(ecg_data, mph=0.6, mpd=0.150, show=True)#detect_peaks(-ecg_data, mph=0.6, mpd=0.150, show=True)
-    ecg_peaks = ecg_data[peaks_index]#-ecg_data[peaks_index]
-    tm_peaks = x[peaks_index]
-    tm_peaks = np.array(tm_peaks)
-    print 'Indices: ', peaks_index
-    print 'Picos Bajos: ', ecg_peaks
-    
-    ## Segundos entre intervalos
-    rateBPM_values = []
-    rateBPM_sum    = 0
-    if len(peaks_index) > 9:  #minimo 10 ciclos
-        for i in range(1,len(peaks_index)):
-            t_dif = tm_peaks[i]-tm_peaks[i-1]
-            rateBPM_values.append(t_dif) 
-        rateBPM_sum = sum(rateBPM_values)
-    
-    ## BPM
-    rateBPM = len(tm_peaks)*1.0 / (x[x.last_valid_index()]-x[0]) * 60.0
-    print 'rateBPM: ', rateBPM
-    print 'Valores rateBPM: ', rateBPM_values
-
-    ## Mean R-R Interval
-    rrmean_values = []
-    rr_mean       = 0
-    for i in range(0,len(rateBPM_values)):
-        rr_mean = 0.75 * rr_mean + 0.25 * rateBPM_values[i]
-        rrmean_values.append(rr_mean)
-
-    up_rr_mean = np.where(rateBPM_values>=(rr_mean*1.15))
-    down_rr_mean = np.where(rateBPM_values<(rr_mean*0.85))
-    print 'RR-MEAN: ', rr_mean
-    print 'UP-rr-mean', up_rr_mean
-    print 'DOWN-rr-mean', down_rr_mean
-
-    ## Resultado
-    values = {'FA': False}
-    if np.any(up_rr_mean):
-        values['FA'] = True
-    if np.any(down_rr_mean):
-        values['FA'] = True
-    
-    values['rr_mean'] = rr_mean
-    values['up_rr_mean'] = rr_mean*1.15
-    values['down_rr_mean'] = rr_mean*0.85
-
-    values['rateBPM'] = rateBPM
-    values['cycles_num'] = len(peaks_index)
-    values['cycles'] = []
-    cycles = []
-    for i in range(0,len(peaks_index)-1):
-        cycles.append('Intervalo R-R #'+str(i+1)+' - #'+str(i+2) +': '+str(rateBPM_values[i]))
-        
-    values['cycles'] = cycles
-    print cycles
-    #--------------------------------------------------
-
-    trace1 = graph_objs.Scatter(
-                        x=x, y=y, # Data
-                        mode='lines', name='signal' # Additional options
-                        )
-
-    layout = graph_objs.Layout(title='ECG ('+file_name+')',
-                   plot_bgcolor='rgb(230, 230,230)')
-                   
-    data = [trace1]
-    fig = graph_objs.Figure(data=data, layout=layout)
-    plot_div = plot(fig, output_type='div', include_plotlyjs=False)
-    return plot_div, values
-
-
-
-
-
-#----------------------------------------------------------
-# ESTE ES EL SCRIPT CON LA NUEVA CONF
-#-----------PROCESSING PLOT-------------
 def signal_processing(file_name):
 
+    print('***************************************************')
+    print('---------------------------------------------------')
     ## ---------------- Se adquiere la senal -----------------
     path = '/data/'
     df = pd.read_csv(settings.MEDIA_ROOT+path+file_name)
@@ -190,6 +44,7 @@ def signal_processing(file_name):
     
     # Frecuencia de Muestro
     Fs = 300
+    rateBPM = 60
 
     ## ---------- ACONDICIONAMIENTO DE LOS VALORES X ----------
     # Entre 1000, porque asi son dados los valores
@@ -249,8 +104,14 @@ def signal_processing(file_name):
 
     # Para R-R
     rr_values_all      = []
+    rr_values_all_plot = []
     rr_mean_values_all = []
+    rrmean_values = []
     rr_mean_prom       = 0
+    rr_up_mean_values_all = []
+    rr_down_mean_values_all = []
+    RRv_all = []
+    RRv_all_plot=[]
 
     # Para saber si plotear ultima parte
     ploteosiono = False
@@ -263,11 +124,13 @@ def signal_processing(file_name):
             if (ultimate_i < x_final) and ((x_final-ultimate_i) < (segundos_bloque/2)):
 
                 # Datos de BLOQUE
-                indice_mayores = (i <= t)                       # Para t
-                t_bloque_parcial = t[indice_mayores]            # Para y
+                indice_mayores = (i <= t)                       
+                t_bloque_parcial = t[indice_mayores]            # Para t
+                y_bloque_parcial = y[indice_mayores]            # Para y
                 indice_menores = (t_bloque_parcial <= x_final)
                 t_bloque = t_bloque_parcial[indice_menores]     # Para t
                 y_bloque = y_bloque_parcial[indice_menores]     # Para y
+                
 
                 last_loop = True
             else:
@@ -324,8 +187,7 @@ def signal_processing(file_name):
                 min_peak_value = min_peak_value_theory
             # Picos: valores
             y_peaks = detect_peaks(y_normal, mph=min_peak_value, mpd=0.3, show=True)    # primer valor probado 0.150
-            print 'HAHAHAH'
-            print y_peaks
+            
             if y_peaks == []:
                 break     
             t_peaks = t_bloque[y_peaks]           
@@ -335,7 +197,7 @@ def signal_processing(file_name):
             # RR-VARIABILITY
             RRv_suma = 0
             RRv_variamucho = False
-            minimo_variacion = 0.6
+            minimo_variacion = 1.0    ##CAMBIAR? por el momento bien
 
             # RR - INTERVALOS
             rr_values    = []
@@ -352,48 +214,73 @@ def signal_processing(file_name):
                     RRv21 = (t_peaks[i2+1]-t_peaks[i2])
                     RRv32 = (t_peaks[i2+2]-t_peaks[i2+1])
                     RRv_suma = RRv_suma + abs(RRv32 - RRv21)
-                    # Intervalos RR varian mucho?
-                    if RRv_suma > minimo_variacion:
-                        RRv_variamucho = True
+
+                if RRv_suma > minimo_variacion:
+                    RRv_variamucho = True
+                    print 'Intervalos RR varian mucho?: ', RRv_suma
+                #RRv_all.append(RRv_suma)
+                             
 
                 # RR - INTERVALOS (segundos)
-                for i3 in range(2,len(t_peaks)):
+                for i3 in range(1,len(t_peaks)):
                     # se guarda valor intervalo RR
                     pulso_ant = t_peaks[i3-1]
                     pulso_act = t_peaks[i3]
                     rr_values.append(pulso_act - pulso_ant)
                 
+                #  de RRv para plot!!
+                RRv_hahas = [RRv_suma]*len(rr_values)
+                for RRv_haha in RRv_hahas:
+                    RRv_all.append(RRv_haha)
+                
+                
                 rr_suma = sum(rr_values)
                 rr_promedio = sum(rr_values)/len(t_peaks)
                 print('RR valores SUMA: '+str(rr_suma))
                 print('RR Intervalo promedio: '+str(rr_promedio))
+                
                 # Asignamos al rr_values total
                 for rr_val in rr_values:                ## REVISAR!!
                     rr_values_all.append(rr_val)
-
+                
                 # MEAN R-R Interval (se toma rr_values anterior)
-                rrmean_values = []
                 rr_mean       = 0
-                for i4 in range(1,len(rr_values)):
+                for i4 in range(0,len(rr_values)):
                     rr_mean = 0.75*rr_mean+0.25*rr_values[i4]
-                    rrmean_values.append(rr_mean)
+                rrmean_values = [rr_mean]*len(rr_values)
+                # Asignamos al rr_mean valores totales
+                for rrmean_value in rrmean_values:
+                    rr_mean_values_all.append(rrmean_value)
 
                 # Valores R-R Limites
-                up_rr_mean = np.where(rr_values>=(rr_mean*1.15))
-                down_rr_mean = np.where(rr_values<(rr_mean*0.85))
+                up_rr_true = []  # Los valores mayores a 
+                up_mean_rrvalues = [i21 for i21 in rr_values if i21 >= (rr_mean*1.15)]   ##ESSTO QUEDA
+                #up_rr_mean_index = np.where(rr_values>=(rr_mean*1.15))[0]
+                #for uppp in up_rr_mean_index:
+                #    up_rr_true.append(rr_values[uppp])                
+                #for uppp in rrmean_values:
+                    #rr_up_mean_values_all.append(uppp)
+                down_rr_true = []  # Los valores mayores a 
+                down_mean_rrvalues = [i22 for i22 in rr_values if i22 <= (rr_mean*0.85)]
+
+                #down_rr_mean = np.where(rr_values<(rr_mean*0.85))
+                #down_rr_true = np.where(rr_values<(rr_mean*0.85))
+                #for up_rr in up_rr_mean:
+                    #print 'ESOT'
+                    #print up_rr
+                    #rr_up_mean_values_all.append(up_rr)
+                #rr_down_mean_values_all.append(sum(down_rr_mean))
                 #up_rr_mean   = rr_values>=(rr_mean*1.15)
                 #down_rr_mean = rr_values<(rr_mean*0.85)
-                if (len(up_rr_mean) + len(down_rr_mean)) > 1:
+                if (len(up_mean_rrvalues) + len(down_mean_rrvalues)) > 1:
                     fuerade_rrmean = True
 
-                # Asignamos al rr_mean valores totales
-                rr_mean_values_all.append(rr_mean)
 
                 # BEATS PER MIMUNTE
-                rateBPM = math.floor(len(y_peaks)*60/(t_bloque[-1]-t_bloque[1]))
+                rateBPM = math.floor(len(y_peaks)*60.0/(t_bloque[-1]-t_bloque[1]))
                 print('BPM: '+ str(rateBPM))
 
-            if (fuerade_rrmean==True) or (RRv_variamucho==True):
+            if (fuerade_rrmean==True) and (RRv_variamucho==True):
                 print('Presenta FA ' + str(rateBPM))
             else:
                 print('No presenta FA')
@@ -410,11 +297,13 @@ def signal_processing(file_name):
                 break
         
         ##----------- PLOT R-R Mean ------------
-        rr_mean_prom = sum(rr_mean_values_all)/len(rr_mean_values_all)
+        #rr_mean_prom = sum(rr_mean_values_all)/len(rr_mean_values_all)
+        #for rr_mean_value in rr_mean_values_all:
+        #    rr_up_mean_values_all.append(rr_mean_value*1.15)
 
-        print 'RR', rr_mean_values_all
-        print 'len(rr): ', len(rr_mean_values_all)
-        print 'RR mean prom',rr_mean_prom
+        #print 'RR', rr_mean_values_all
+        #print 'len(rr): ', len(rr_mean_values_all)
+        #print 'RR mean prom',rr_mean_prom
 
     else:
         print('No se adquirio suficiente tiempo')
@@ -443,16 +332,16 @@ def signal_processing(file_name):
     #print 'Picos Bajos: ', ecg_peaks
     
     ## Segundos entre intervalos
-    rateBPM_values = []
-    rateBPM_sum    = 0
-    if len(peaks_index) > 9:  #minimo 10 ciclos
-        for i in range(1,len(peaks_index)):
-            t_dif = tm_peaks[i]-tm_peaks[i-1]
-            rateBPM_values.append(t_dif) 
-        rateBPM_sum = sum(rateBPM_values)
+    #rateBPM_values = []
+    #rateBPM_sum    = 0
+    #if len(peaks_index) > 9:  #minimo 10 ciclos
+    #    for i in range(1,len(peaks_index)):
+    #        t_dif = tm_peaks[i]-tm_peaks[i-1]
+    #        rateBPM_values.append(t_dif) 
+    #    rateBPM_sum = sum(rateBPM_values)
     
     ## BPM
-    #rateBPM = len(tm_peaks)*1.0 / (x[-1]-x[0]) * 60.0
+    #rateBPM = 60#len(tm_peaks)*1.0 / (x[-1]-x[0]) * 60.0
     #print 'rateBPM: ', rateBPM
     #print 'Valores rateBPM: ', rateBPM_values
 
@@ -471,9 +360,9 @@ def signal_processing(file_name):
 
     ## Resultado
     values = {'FA': False}
-    if np.any(up_rr_mean):
+    if np.any(up_rr_true):
         values['FA'] = True
-    if np.any(down_rr_mean):
+    if np.any(down_rr_true):
         values['FA'] = True
     
     values['rr_mean'] = rr_mean
@@ -484,10 +373,10 @@ def signal_processing(file_name):
     values['cycles_num'] = len(peaks_index)
     values['cycles'] = []
     cycles = []
-    #for i in range(0,len(peaks_index)-1):
-    #    cycles.append('Intervalo R-R #'+str(i+1)+' - #'+str(i+2) +': '+str(rateBPM_values[i]))
+    for i in range(0,len(y_peaks)-1):
+        cycles.append('Intervalo R-R #'+str(i+1)+' - #'+str(i+2) +': '+str(rateBPM))
         
-    #values['cycles'] = cycles
+    values['cycles'] = cycles
     #print cycles
     #--------------------------------------------------
 
@@ -498,38 +387,82 @@ def signal_processing(file_name):
 
     layout = graph_objs.Layout(title='ECG ('+file_name+')',
                    plot_bgcolor='rgb(230, 230,230)')
-    print 'ESTO',rr_values_all[5]
-    ## ----------------- R-R Interval Plot --------------
-    x_values = range(50, len(rr_values_all))
+    
+
+    ## ----------------- R-R MEAN Interval Plot --------------
+    x_values_mean = range(0, len(rr_values_all))
+    
+    ups_mean = []
+    for rr_up_mean in rr_mean_values_all:
+        ups_mean.append(rr_up_mean*1.15)
+    x_values_mean1 = range(0, len(ups_mean))
+
+    downs_mean = []
+    for down_up_mean in rr_mean_values_all:
+        downs_mean.append(down_up_mean*0.85)
+    x_values_mean2 = range(0, len(downs_mean))
+    
+    
     trace2 = graph_objs.Scatter(
-        x=x_values,
+        x=x_values_mean,
         y=rr_values_all,
+        mode='markers',
+        name='Intervalos MEAN R-R'
+    )
+    trace3 = graph_objs.Scatter(
+        x=x_values_mean1,
+        y=ups_mean,
+        name='Limite MEAN R-R'
+    )
+    
+    trace4 = graph_objs.Scatter(
+        x=x_values_mean2,
+        y=downs_mean,
+        name='Limite MEAN R-R'
+    )
+    # -----------------------------------------------------
+
+    # ----------------R-R Interval Plot--------------------
+    x_values = range(0, len(rr_values_all))
+    rr_values_prom = sum(rr_values_all)/len(rr_values_all)
+    rr_down = [rr_values_prom*0.75] * len(rr_values_all)
+    rr_up = [rr_values_prom*1.25] * len(rr_values_all)
+
+    rr_up = [1.5]*len(x_values)
+    rr_down = [0.4]*len(x_values)
+
+    trace5 = graph_objs.Scatter(
+        x=x_values,
+        y=RRv_all,
         mode='markers',
         name='Intervalos R-R'
     )
-    trace3 = graph_objs.Scatter(
-        x=[50, len(rr_values_all)],
-        y=[rr_mean_prom*1.15, rr_mean_prom*1.15],
+    trace6 = graph_objs.Scatter(
+        x=[0, len(x_values)],
+        y=rr_up,#[sum(RRv_all)/len(RRv_all)*1.15, sum(RRv_all)/len(RRv_all)*1.15],#y=rr_up_mean_values_all,
         name='Limite R-R'
     )
-    trace4 = graph_objs.Scatter(
-        x=[50, len(rr_values_all)],
-        y=[rr_mean_prom*0.85, rr_mean_prom*0.85],
+    trace7 = graph_objs.Scatter(
+        x=[0, len(x_values)],
+        y=rr_down,#[sum(RRv_all)/len(RRv_all)*0.85, sum(RRv_all)/len(RRv_all)*0.85],#y=[rr_mean_prom*0.85, rr_mean_prom*0.85],
         name='Limite R-R'
     )
-    # -----------------------------------------------------
                    
-    data = [trace1, trace2, trace3]
-    fig = tools.make_subplots(rows=2, cols=1, subplot_titles=('ECG', 'R-R Variabilidad'))
+    data = [trace1, trace2, trace3, trace4, trace5]
+    fig = tools.make_subplots(rows=3, cols=1, subplot_titles=('ECG', 'R-R Variabilidad'))
     fig.append_trace(trace1, 1, 1)
     fig.append_trace(trace2, 2, 1)
     fig.append_trace(trace3, 2, 1)
     fig.append_trace(trace4, 2, 1)
-    fig['layout']['xaxis1'].update(title='Segundos')
+    fig.append_trace(trace5, 3, 1)
+    fig.append_trace(trace6, 3, 1)
+    fig.append_trace(trace7, 3, 1)
+    fig['layout']['xaxis1'].update(title='Segundos', range=[5, 15])
     fig['layout']['yaxis1'].update(title='Milivoltios')
     fig['layout']['plot_bgcolor']='rgb(230, 230,230)'
-    fig['layout']['xaxis2'].update(title='Bloques')
+    fig['layout']['xaxis2'].update(title='Bloques', range=[0, 100] )
     fig['layout']['yaxis2'].update(title='R-R Intervalos')
+    fig['layout']['xaxis3'].update(title='Bloques', range=[0, 100])
     #fig = graph_objs.Figure(data=data, layout=layout)
     plot_div = plot(fig, output_type='div', include_plotlyjs=False)
     return plot_div, values

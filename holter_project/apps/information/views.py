@@ -9,7 +9,7 @@ from django.core.urlresolvers import reverse
 
 from .models import Diagnosis, Signal
 from .forms import SignalProcessingForm
-from .utils.ecg_plotter import plot_ecg, signal_processing
+from .utils.ecg_plotter import signal_processing
 
 from apps.person.models import Patient
 
