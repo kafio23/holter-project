@@ -112,9 +112,16 @@ def signal_processing(file_name):
     rr_down_mean_values_all = []
     RRv_all = []
     RRv_all_plot=[]
+    rr_mean       = 0
 
     # Para saber si plotear ultima parte
     ploteosiono = False
+
+    y_peaks=[]
+    t_peaks = []
+    
+    ## Resultado
+    values = {'FA': False}
 
     # PROCESAMIENTO:
     if tiempo_total > segundos_bloque:    # Por encima de  10 segundos (tiempo total)
@@ -138,7 +145,7 @@ def signal_processing(file_name):
                 indice_mayores = (i <= t)
                 t_bloque_parcial = t[indice_mayores]            # Para t
                 y_bloque_parcial = y[indice_mayores]            # Para y
-                indice_menores = (t_bloque_parcial < (i + segundos_bloque))
+                indice_menores = (t_bloque_parcial <= (i + segundos_bloque))
                 t_bloque = t_bloque_parcial[indice_menores]     # Para t
                 y_bloque = y_bloque_parcial[indice_menores]     # Para y
 
@@ -197,7 +204,7 @@ def signal_processing(file_name):
             # RR-VARIABILITY
             RRv_suma = 0
             RRv_variamucho = False
-            minimo_variacion = 1.0    ##CAMBIAR? por el momento bien
+            minimo_variacion = 8    ##CAMBIAR? por el momento bien 0.6
 
             # RR - INTERVALOS
             rr_values    = []
@@ -254,14 +261,14 @@ def signal_processing(file_name):
 
                 # Valores R-R Limites
                 up_rr_true = []  # Los valores mayores a 
-                up_mean_rrvalues = [i21 for i21 in rr_values if i21 >= (rr_mean*1.15)]   ##ESSTO QUEDA
+                up_mean_rrvalues = [i21 for i21 in rr_values if i21 >= (rr_mean*2.5+0.5)]  #1.15 ##ESSTO QUEDA
                 #up_rr_mean_index = np.where(rr_values>=(rr_mean*1.15))[0]
                 #for uppp in up_rr_mean_index:
                 #    up_rr_true.append(rr_values[uppp])                
                 #for uppp in rrmean_values:
                     #rr_up_mean_values_all.append(uppp)
                 down_rr_true = []  # Los valores mayores a 
-                down_mean_rrvalues = [i22 for i22 in rr_values if i22 <= (rr_mean*0.85)]
+                down_mean_rrvalues = [i22 for i22 in rr_values if i22 <= (rr_mean*0.1-0.5)]  #0.85
 
                 #down_rr_mean = np.where(rr_values<(rr_mean*0.85))
                 #down_rr_true = np.where(rr_values<(rr_mean*0.85))
@@ -274,6 +281,8 @@ def signal_processing(file_name):
                 #down_rr_mean = rr_values<(rr_mean*0.85)
                 if (len(up_mean_rrvalues) + len(down_mean_rrvalues)) > 1:
                     fuerade_rrmean = True
+                elif up_mean_rrvalues or down_mean_rrvalues:
+                    fuerade_rrmean = True
 
 
                 # BEATS PER MIMUNTE
@@ -282,6 +291,7 @@ def signal_processing(file_name):
 
             if (fuerade_rrmean==True) and (RRv_variamucho==True):
                 print('Presenta FA ' + str(rateBPM))
+                values['FA'] = True
             else:
                 print('No presenta FA')
 
@@ -345,25 +355,10 @@ def signal_processing(file_name):
     #print 'rateBPM: ', rateBPM
     #print 'Valores rateBPM: ', rateBPM_values
 
-    ## Mean R-R Interval
-    #rrmean_values = []
-    #rr_mean       = 0
-    #for i in range(0,len(rateBPM_values)):
-    #    rr_mean = 0.75 * rr_mean + 0.25 * rateBPM_values[i]
-    #    rrmean_values.append(rr_mean)
 
-    #up_rr_mean = np.where(rateBPM_values>=(rr_mean*1.15))
-    #down_rr_mean = np.where(rateBPM_values<(rr_mean*0.85))
-    #print 'RR-MEAN: ', rr_mean
-    #print 'UP-rr-mean', up_rr_mean
-    #print 'DOWN-rr-mean', down_rr_mean
 
-    ## Resultado
-    values = {'FA': False}
-    if np.any(up_rr_true):
-        values['FA'] = True
-    if np.any(down_rr_true):
-        values['FA'] = True
+    
+    
     
     values['rr_mean'] = rr_mean
     values['up_rr_mean'] = rr_mean*1.15
@@ -394,12 +389,12 @@ def signal_processing(file_name):
     
     ups_mean = []
     for rr_up_mean in rr_mean_values_all:
-        ups_mean.append(rr_up_mean*1.15)
+        ups_mean.append(rr_up_mean*2.5+0.5) #1.15
     x_values_mean1 = range(0, len(ups_mean))
 
     downs_mean = []
     for down_up_mean in rr_mean_values_all:
-        downs_mean.append(down_up_mean*0.85)
+        downs_mean.append(down_up_mean*0.1-0.5) #0.85
     x_values_mean2 = range(0, len(downs_mean))
     
     
@@ -425,11 +420,9 @@ def signal_processing(file_name):
     # ----------------R-R Interval Plot--------------------
     x_values = range(0, len(rr_values_all))
     rr_values_prom = sum(rr_values_all)/len(rr_values_all)
-    rr_down = [rr_values_prom*0.75] * len(rr_values_all)
-    rr_up = [rr_values_prom*1.25] * len(rr_values_all)
-
-    rr_up = [1.5]*len(x_values)
-    rr_down = [0.4]*len(x_values)
+    
+    rr_up = [15]*len(x_values)
+    rr_down = [0]*len(x_values)
 
     trace5 = graph_objs.Scatter(
         x=x_values,
@@ -460,9 +453,11 @@ def signal_processing(file_name):
     fig['layout']['xaxis1'].update(title='Segundos', range=[5, 15])
     fig['layout']['yaxis1'].update(title='Milivoltios')
     fig['layout']['plot_bgcolor']='rgb(230, 230,230)'
-    fig['layout']['xaxis2'].update(title='Bloques', range=[0, 100] )
+    fig['layout']['xaxis2'].update(title='Bloques')#, range=[0, 100] )
     fig['layout']['yaxis2'].update(title='R-R Intervalos')
-    fig['layout']['xaxis3'].update(title='Bloques', range=[0, 100])
+    fig['layout']['xaxis3'].update(title='Bloques')#, range=[0, 100])
     #fig = graph_objs.Figure(data=data, layout=layout)
     plot_div = plot(fig, output_type='div', include_plotlyjs=False)
+
+    print file_name
     return plot_div, values

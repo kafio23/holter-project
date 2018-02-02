@@ -39,9 +39,9 @@ class PlotECG(TemplateView):
         plot, values = signal_processing(diagnosis.signal.name)
         
         if values['FA']:
-            result = 'Presencia de Arritmia de Fibrilación auricular'
+            result = 'Presencia de Evento: Posible Arritmia de Fibrilación auricular'
         else:
-            result = 'No se detecta presencia de Fibrilación Auricular'
+            result = 'No se detecta presencia de Evento de Fibrilación Auricular'
 
         kwargs['patient'] = patient
         kwargs['title']   = 'Diagnosis'
