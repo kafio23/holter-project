@@ -204,7 +204,7 @@ def signal_processing(file_name):
             # RR-VARIABILITY
             RRv_suma = 0
             RRv_variamucho = False
-            minimo_variacion = 8    ##CAMBIAR? por el momento bien 0.6
+            minimo_variacion = 1.5    ##CAMBIAR? por el momento bien 0.6
 
             # RR - INTERVALOS
             rr_values    = []
@@ -261,24 +261,16 @@ def signal_processing(file_name):
 
                 # Valores R-R Limites
                 up_rr_true = []  # Los valores mayores a 
-                up_mean_rrvalues = [i21 for i21 in rr_values if i21 >= (rr_mean*2.5+0.5)]  #1.15 ##ESSTO QUEDA
+                up_mean_rrvalues = [i21 for i21 in rr_values if i21 >= (rr_mean*1.35)]  #2.5+0.5##ESSTO QUEDA
                 #up_rr_mean_index = np.where(rr_values>=(rr_mean*1.15))[0]
                 #for uppp in up_rr_mean_index:
                 #    up_rr_true.append(rr_values[uppp])                
                 #for uppp in rrmean_values:
                     #rr_up_mean_values_all.append(uppp)
                 down_rr_true = []  # Los valores mayores a 
-                down_mean_rrvalues = [i22 for i22 in rr_values if i22 <= (rr_mean*0.1-0.5)]  #0.85
+                down_mean_rrvalues = [i22 for i22 in rr_values if i22 <= (rr_mean*0.85)]  #0.1-0.5
 
-                #down_rr_mean = np.where(rr_values<(rr_mean*0.85))
-                #down_rr_true = np.where(rr_values<(rr_mean*0.85))
-                #for up_rr in up_rr_mean:
-                    #print 'ESOT'
-                    #print up_rr
-                    #rr_up_mean_values_all.append(up_rr)
-                #rr_down_mean_values_all.append(sum(down_rr_mean))
-                #up_rr_mean   = rr_values>=(rr_mean*1.15)
-                #down_rr_mean = rr_values<(rr_mean*0.85)
+                
                 if (len(up_mean_rrvalues) + len(down_mean_rrvalues)) > 1:
                     fuerade_rrmean = True
                 elif up_mean_rrvalues or down_mean_rrvalues:
@@ -286,7 +278,7 @@ def signal_processing(file_name):
 
 
                 # BEATS PER MIMUNTE
-                rateBPM = math.floor(len(y_peaks)*60.0/(t_bloque[-1]-t_bloque[1]))
+                rateBPM = len(y_peaks)*60.0/(t_bloque[-1]-t_bloque[1])
                 print('BPM: '+ str(rateBPM))
 
             if (fuerade_rrmean==True) and (RRv_variamucho==True):
@@ -389,12 +381,12 @@ def signal_processing(file_name):
     
     ups_mean = []
     for rr_up_mean in rr_mean_values_all:
-        ups_mean.append(rr_up_mean*2.5+0.5) #1.15
+        ups_mean.append(rr_up_mean*1.35) #2.5+0.5
     x_values_mean1 = range(0, len(ups_mean))
 
     downs_mean = []
     for down_up_mean in rr_mean_values_all:
-        downs_mean.append(down_up_mean*0.1-0.5) #0.85
+        downs_mean.append(down_up_mean*0.85) #0.1-0.5
     x_values_mean2 = range(0, len(downs_mean))
     
     
@@ -421,8 +413,8 @@ def signal_processing(file_name):
     x_values = range(0, len(rr_values_all))
     rr_values_prom = sum(rr_values_all)/len(rr_values_all)
     
-    rr_up = [15]*len(x_values)
-    rr_down = [0]*len(x_values)
+    rr_up = [1.5]*len(x_values)#[15]*len(x_values)
+    rr_down = [0.5]*len(x_values)#[0]*len(x_values)
 
     trace5 = graph_objs.Scatter(
         x=x_values,
