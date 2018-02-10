@@ -119,6 +119,7 @@ def signal_processing(file_name):
 
     y_peaks=[]
     t_peaks = []
+    picos_todos = []
     
     ## Resultado
     values = {'FA': False}
@@ -199,7 +200,10 @@ def signal_processing(file_name):
                 break     
             t_peaks = t_bloque[y_peaks]           
             y_peaks = y_normal[y_peaks]
-        
+
+            #Colocar todos los picos:
+            for peak in y_peaks:
+                picos_todos.append(peak)
             
             # RR-VARIABILITY
             RRv_suma = 0
@@ -357,7 +361,7 @@ def signal_processing(file_name):
     values['down_rr_mean'] = rr_mean*0.85
 
     values['rateBPM'] = rateBPM
-    values['cycles_num'] = len(peaks_index)
+    values['cycles_num'] = len(picos_todos)
     values['cycles'] = []
     cycles = []
     for i in range(0,len(y_peaks)-1):
@@ -413,8 +417,8 @@ def signal_processing(file_name):
     x_values = range(0, len(rr_values_all))
     rr_values_prom = sum(rr_values_all)/len(rr_values_all)
     
-    rr_up = [1.5]*len(x_values)#[15]*len(x_values)
-    rr_down = [0.5]*len(x_values)#[0]*len(x_values)
+    rr_up = [1.1]*len(x_values)#[15]*len(x_values)
+    rr_down = [0]*len(x_values)#[0]*len(x_values)
 
     trace5 = graph_objs.Scatter(
         x=x_values,
@@ -445,9 +449,9 @@ def signal_processing(file_name):
     fig['layout']['xaxis1'].update(title='Segundos', range=[5, 15])
     fig['layout']['yaxis1'].update(title='Milivoltios')
     fig['layout']['plot_bgcolor']='rgb(230, 230,230)'
-    fig['layout']['xaxis2'].update(title='Bloques')#, range=[0, 100] )
+    fig['layout']['xaxis2'].update(title='Bloques')#, range=[0, len(x_values)] )
     fig['layout']['yaxis2'].update(title='R-R Intervalos')
-    fig['layout']['xaxis3'].update(title='Bloques')#, range=[0, 100])
+    fig['layout']['xaxis3'].update(title='Bloques')#, range=[0, len(x_values)+5])
     #fig = graph_objs.Figure(data=data, layout=layout)
     plot_div = plot(fig, output_type='div', include_plotlyjs=False)
 
