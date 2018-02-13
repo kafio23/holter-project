@@ -2,6 +2,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.generic import TemplateView
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 
 #Plotly
 import plotly.plotly as py
@@ -17,7 +19,9 @@ import datetime
 
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+    #return HttpResponse("Hello, world. You're at the polls index.")
+    return HttpResponseRedirect(reverse('url_home'))
+
 
 def home(request):
     kwargs = {'title': 'Holter Monitor Web'}
@@ -29,7 +33,6 @@ def plot_graph():
     import plotly
 
     py = plotly.plotly(username='kafio', key='WHQcWnXsrvMrDtgDNHdT')
-
 
     y=0
     t=0
@@ -180,7 +183,7 @@ def plot_ecg():
 
     layout = go.Layout(title='Simple Plot from csv data',
                    plot_bgcolor='rgb(230, 230,230)')
-                   
+
     data = [trace1]
     fig = go.Figure(data=data, layout=layout)
     plot_div = plot(fig, output_type='div', include_plotlyjs=False)
