@@ -21,20 +21,19 @@
 <div class="col-md-12">
   {{result}}
   <br>
-  <b># Ciclos cardiacos: </b> {{cycles_num}}
+  <b> # Ciclos cardiacos: </b> {{cycles_num}}
   <br>
-  <b>Ritmo cardiaco promedio: </b> {{rateBPM}}
+  <b> Ritmo cardiaco promedio: </b> {{rateBPM}}
   <br>
   <br>
-  {# for cycle in cycles#}
-    {{cycle}} 
+  <b> Intervalos con Eventos ({{eventos_num}}):  </b>
+  <br>
+  {% for tiempo_plot in tiempos_plots%}
+    {{tiempo_plot}}
     <br>
-  {# endfor #}
+  {% endfor %}
 </div>
 
-<a href="{% url 'url_processing_plots' patient.pk diagnosis.pk %}">
-  <i class="glyphicon glyphicon-cog"></i>
-  Signal Processing </a>
 
 <!-- /.container -->
 
