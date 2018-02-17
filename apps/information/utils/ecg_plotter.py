@@ -465,9 +465,15 @@ def signal_processing(file_name):
     print('***************************************************')
     print('---------------------------------------------------')
 
-    ## ----------------- Datos PLOTS ------------------
+    ## ---------------- Datos de Eventos PLOTS ---------------
     tiempos_plots = []
-    bpm_plots = []
+    bpm_plots     = []
+    x_plots       = []
+    y_plots       = []
+    rrmean_values_plots = []
+    rr_variability_plots = []
+    rrmean_plots       = []
+    rr_variabilitysum_plots = []
 
     ## ---------------- Se adquiere la senal -----------------
     path = '/data/'
@@ -645,13 +651,14 @@ def signal_processing(file_name):
             
             # RR-VARIABILITY
             RRv_suma = 0
+            RRv_suma_all = []
             RRv_variamucho = False
             minimo_variacion = 1.5    ##CAMBIAR? por el momento bien 0.6
 
             # RR - INTERVALOS
             rr_values    = []
             rr_promedio  = 0
-            
+            RRv_suma_sola = []
             # RR-MEAN
             fuerade_rrmean = False
 
@@ -662,7 +669,9 @@ def signal_processing(file_name):
                     # No deberia haber variacion (RRv = 0)
                     RRv21 = (t_peaks[i2+1]-t_peaks[i2])
                     RRv32 = (t_peaks[i2+2]-t_peaks[i2+1])
+                    RRv_suma_sola.append(abs(RRv32 - RRv21))
                     RRv_suma = RRv_suma + abs(RRv32 - RRv21)
+                    RRv_suma_all.append(abs(RRv32 - RRv21))   #Plots
 
                 if RRv_suma > minimo_variacion:
                     RRv_variamucho = True
@@ -676,7 +685,8 @@ def signal_processing(file_name):
                     rr_values.append(pulso_act - pulso_ant)
                 
                 #  de RRv para plot!!
-                RRv_hahas = [RRv_suma]*len(rr_values)
+                RRv_hahas = [RRv_suma]*len(rr_values)  ## REVISAR DESCOMENTAR
+                #RRv_hahas = RRv_suma_sola*len(rr_values) 
                 for RRv_haha in RRv_hahas:
                     RRv_all.append(RRv_haha)
                 
@@ -720,6 +730,12 @@ def signal_processing(file_name):
                 print('Presenta FA ' + str(rateBPM))
                 values['FA'] = True
                 tiempos_plots.append([t_bloque[0],t_bloque[-1]])
+                x_plots.append(t_bloque)
+                y_plots.append(y_smooth)
+                rrmean_values_plots.append(rrmean_values)
+                rr_variability_plots.append(rr_values)
+                rr_variabilitysum_plots.append(RRv_suma_all)
+                rrmean_plots.append(rr_mean)
                 bpm_plots.append(rateBPM)
             elif (fuerade_rrmean==True):
                 values['ARRITMIA'] = True
@@ -841,7 +857,76 @@ def signal_processing(file_name):
     fig['layout']['xaxis2'].update(title='Bloques')#, range=[0, len(x_values)] )
     fig['layout']['yaxis2'].update(title='R-R Intervalos')
     fig['layout']['xaxis3'].update(title='Bloques')#, range=[0, len(x_values)+5])
-    #fig = graph_objs.Figure(data=data, layout=layout)
+    
     plot_div = plot(fig, output_type='div', include_plotlyjs=False)
 
-    return plot_div, values
+    # --------------- Plots de Eventos -----------------
+    event_plots = []            #Plots de eventos
+    plot_cont   = 0
+    
+    if len(tiempos_plots) > 0:
+        for tiempos_plot in tiempos_plots:
+            event_trace = graph_objs.Scatter(
+                            x=x_plots[plot_cont],
+                            y=y_plots[plot_cont],
+                            mode='lines',
+                            name = 'Evento Arritmico'
+                        )
+
+            x_rr_plots = range(0, len(rr_variability_plots))
+            event_trace2 = graph_objs.Scatter(
+                            x=x_rr_plots[plot_cont],
+                            y=rr_variability_plots[plot_cont],
+                            mode='markers',
+                            name='Variabilidad R-R'
+                        )
+
+            rrmean_up_plots = []
+            rrmean_up_plots.append(rrmean_plots[plot_cont]*1.35)
+            rrmean_up_plots = rrmean_up_plots*len(rr_variability_plots[plot_cont])
+            
+            event_trace3 = graph_objs.Scatter(
+                            x=[0, len(rrmean_up_plots)],
+                            y=rrmean_up_plots,
+                            name='Limite MEAN R-R'
+                        )
+            rrmean_down_plots = []
+            rrmean_down_plots.append(rrmean_plots[plot_cont]*0.85)
+            rrmean_down_plots = rrmean_down_plots*len(rr_variability_plots[plot_cont])
+            
+            event_trace4 = graph_objs.Scatter(
+                            x=[0, len(rrmean_down_plots)],
+                            y=rrmean_down_plots,
+                            name='Limite MEAN R-R'
+                        )
+
+            #---------------------------------------------------------
+            x_rrv_plots = range(0, len(rr_variabilitysum_plots[plot_cont]))
+            rr_up_plots = [0.8]*len(x_rrv_plots)
+            event_trace5 = graph_objs.Scatter(
+                            x=x_rrv_plots[plot_cont],
+                            y=rr_variabilitysum_plots[plot_cont],
+                            mode='markers',
+                            name='Suma de Variabilidad R-R'
+                        )
+            event_trace6 = graph_objs.Scatter(
+                            x=[0, len(rr_up_plots)],
+                            y=rr_up_plots,#[sum(RRv_all)/len(RRv_all)*1.15, sum(RRv_all)/len(RRv_all)*1.15],#y=rr_up_mean_values_all,
+                            name='Limite R-R (propio)'
+                        )
+
+            subplot_titles = ('Evento: del segundo '+ str(int(tiempos_plot[0]))+' - al segundo '+str(int(tiempos_plot[1])), 
+                                'R-R Variabilidad')
+            event_fig = tools.make_subplots(rows=3, cols=1, subplot_titles=subplot_titles)
+            event_fig.append_trace(event_trace, 1, 1)
+            event_fig.append_trace(event_trace2, 2, 1)
+            event_fig.append_trace(event_trace3, 2, 1)
+            event_fig.append_trace(event_trace4, 2, 1)
+            event_fig.append_trace(event_trace5, 3, 1)
+            event_fig.append_trace(event_trace6, 3, 1)
+            event_fig['layout']['xaxis1'].update(title='Segundos')
+            event_plot = plot(event_fig, output_type='div', include_plotlyjs=False)
+            event_plots.append(event_plot)
+            plot_cont += 1
+    # --------------------------------------------------
+    return plot_div, values, event_plots

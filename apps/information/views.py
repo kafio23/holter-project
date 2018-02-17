@@ -100,7 +100,7 @@ class PlotsECG(TemplateView):
         patient   = diagnosis.patient
 
         signal_file = diagnosis.signal.name
-        plot, values = signal_processing(signal_file)
+        plot, values, event_plots = signal_processing(signal_file)
         
         if values['FA']:
             result = 'Presencia de Evento: Posible Arritmia de Fibrilación auricular'
@@ -116,6 +116,7 @@ class PlotsECG(TemplateView):
         kwargs['suptitle'] = diagnosis.diagnosis
         context = super(PlotsECG, self).get_context_data(**kwargs)
         context['plot']          = plot
+        context['event_plots']   = event_plots
         context['result']        = result
         context['rateBPM']       = values['rateBPM']
         context['cycles_num']    = values['cycles_num']

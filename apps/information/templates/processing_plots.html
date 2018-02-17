@@ -32,9 +32,18 @@
     {{tiempo_plot}}
     <br>
   {% endfor %}
+  <br>
 </div>
 
-
+{% for event_plot in event_plots %}
+<div class="col-md-12">
+  <div class="row" style="border: 1px solid black">
+    <div class="col-md-12">{{event_plot|safe}}</div>
+  </div>
+</div>
+<br>
+<br>
+{% endfor%}
 <!-- /.container -->
 
 {% endblock %}
