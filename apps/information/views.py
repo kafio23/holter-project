@@ -9,7 +9,7 @@ from django.core.urlresolvers import reverse
 
 from .models import Diagnosis, Signal
 from .forms import SignalProcessingForm
-from .utils.ecg_plotter import signal_processing
+from .utils.ecg_plotter import signal_processing, signal_processing_original
 
 from apps.person.models import Patient
 
@@ -36,7 +36,7 @@ class PlotECG(TemplateView):
         patient   = diagnosis.patient
 
         signal_file = diagnosis.signal.name
-        plot, values = signal_processing(diagnosis.signal.name)
+        plot, values = signal_processing_original(signal_file)
         
         if values['FA']:
             result = 'Presencia de Evento: Posible Arritmia de Fibrilación auricular'

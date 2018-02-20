@@ -120,7 +120,7 @@ def patient_overview(request, patient_id):
     kwargs['objects'] = diagnosis
     kwargs['title']   = 'Overview'
     kwargs['suptitle'] = patient.first_name+' '+patient.last_name
-    kwargs['keys'] = ['doctor', 'diagnosis', 'date']
+    kwargs['keys'] = ['doctor', 'diagnosis', 'signal', 'date']
 
     return render(request, 'patient_overview.html', kwargs)
 

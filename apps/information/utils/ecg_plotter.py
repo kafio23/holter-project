@@ -75,14 +75,14 @@ def signal_processing_original(file_name):
 
     ## -------------------- Datos ---------------------
     # BPM (Latidos por MINUTO (60 segundos))
-    taquicardia = 100.0                   # Mayor que
-    bradicardia = 60.0                    # Menor que
+    taquicardia = 100.0                     # Mayor que
+    bradicardia = 60.0                      # Menor que
     # Separacion de PICOS (1 Hz - 1.667 Hz (2 Hz))
-    taquicardia_seg = 60/taquicardia    # Menor que 0.6 segundos
-    bradicardia_seg = 60/bradicardia    # Mayor que 1.0 segundos
+    taquicardia_seg = 60/taquicardia        # Menor que 0.6 segundos
+    bradicardia_seg = 60/bradicardia        # Mayor que 1.0 segundos
     # En milisegundos
-    taquicardia_mili  = 600.0             # Menor que 600 milisegundos
-    bradicardia_mili  = 1000.0            # Mayor que 1000 milisegundos
+    taquicardia_mili  = 600.0               # Menor que 600 milisegundos
+    bradicardia_mili  = 1000.0              # Mayor que 1000 milisegundos
 
     ## ------------- CONVERSION DE BITS ---------------  
     num_bits = 12.0
@@ -415,7 +415,7 @@ def signal_processing_original(file_name):
 
     # ----------------R-R Interval Plot--------------------
     x_values = range(0, len(rr_values_all))
-    rr_values_prom = sum(rr_values_all)/len(rr_values_all)
+    #rr_values_prom = sum(rr_values_all)/len(rr_values_all)
     
     rr_up = [1.1]*len(x_values)#[15]*len(x_values)
     rr_down = [0]*len(x_values)#[0]*len(x_values)
@@ -505,11 +505,11 @@ def signal_processing(file_name):
     # Inicio de muestra (segundos)
     x_inicio1 = x[0]
     x_decimal = x_inicio1-math.floor(x_inicio1)
-    x_inicio = (x_decimal * 0.999) / 0.299  + math.floor(x_inicio1)    ## PREGUNTAR
+    x_inicio = (x_decimal * 0.999) / 0.299  + math.floor(x_inicio1)   
     # Final de muestra (segundos)
     x_final1 = x[-1]
     x_decimal_fin = x_final1 - math.floor(x_final1)
-    x_final = (x_decimal_fin * 0.999) / 0.299 + math.floor(x_final1)   ## PREGUNTAR
+    x_final = (x_decimal_fin * 0.999) / 0.299 + math.floor(x_final1)   
     
     # TIEMPO Total de la SENAL
     tiempo_total = x_final - x_inicio
@@ -621,13 +621,13 @@ def signal_processing(file_name):
 
             # MULTIPLICACION por si misma
             y_var = y_detrend * y_detrend
-            y_var = y_var * 100              # 10 (valor a milisegundos)
+            y_var = y_var * 100              # 10 (valor a milivoltios)
             y_normal = y_var
 
 
             # DETECCION de PICOS
             y_max = max(y_normal)
-            print y_max
+
             # umbral minimo del pico de la senal
             min_peak_value = y_max*0.4
             
@@ -820,7 +820,7 @@ def signal_processing(file_name):
 
     # ----------------R-R Interval Plot--------------------
     x_values = range(0, len(rr_values_all))
-    rr_values_prom = sum(rr_values_all)/len(rr_values_all)
+    #rr_values_prom = sum(rr_values_all)/len(rr_values_all)
     
     rr_up = [1.1]*len(x_values)#[15]*len(x_values)
     rr_down = [0]*len(x_values)#[0]*len(x_values)
