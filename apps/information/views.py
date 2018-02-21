@@ -27,6 +27,18 @@ def diagnosis_plot(request, patient_id, diag_id):
     return render(request, 'diagnosis_plot.html', kwargs)
 
 
+def diagnosis_edit(request, patient_id, diag_id):
+    diagnosis = get_object_or_404(Diagnosis, pk=diag_id)
+    patient   = diagnosis.patient 
+
+    kwargs = {}
+    kwargs['patient'] = patient
+    kwargs['title']   = 'Diagnosis'
+    kwargs['suptitle'] = diagnosis.diagnosis
+
+    return render(request, 'diagnosis_edit.html', kwargs)
+
+
 class PlotECG(TemplateView):
     template_name = "diagnosis_plot.html"
 

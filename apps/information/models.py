@@ -47,3 +47,6 @@ class Diagnosis(models.Model):
 
     def get_url_processing_plots(self):
         return reverse('url_processing_plots', args=[self.patient.pk, str(self.pk)])
+    
+    def get_url_diagnosis_edit(self):
+        return reverse('url_diagnosis_edit', args=[self.patient.pk, str(self.pk)])
