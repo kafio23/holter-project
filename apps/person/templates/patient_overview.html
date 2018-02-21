@@ -26,9 +26,15 @@
       {% for key in keys %}
       <td>{{ object|attr:key }}</td>
       {% endfor %}
-      <td><a href="{{object.get_url_diagnosis_edit}}" class="btn btn-info" role="button">
+      <td>
+        <a href="{{object.get_url_diagnosis_edit}}" class="btn btn-info" role="button">
           <span class="glyphicon glyphicon-edit"></span>
-          Edit</a>
+          Edit
+        </a>
+        <a href="{{object.get_url_diagnosis_plot}}" class="btn btn-success" role="button">
+          <span class="glyphicon glyphicon-eye-open"></span>
+          Signal
+        </a>
       </td>
     </tr>
   {% endfor %}

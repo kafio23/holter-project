@@ -42,3 +42,6 @@ class Patient(models.Model):
 
     def get_absolute_url(self):
         return reverse('url_patient_view', args=[str(self.pk)])
+
+    def get_overview_url(self):
+        return reverse('url_patient_overview', args=[str(self.pk)])

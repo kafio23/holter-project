@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from django import forms
 from django.utils.safestring import mark_safe
 
-from .models import Signal
+from .models import Signal, Diagnosis
 from apps.person.models import Patient
 
 BLOCKTIME_SECS = (
@@ -11,6 +11,24 @@ BLOCKTIME_SECS = (
                 (20, '20'),
                 (60, '60'),                
                 )
+
+class DiagnosisForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(DiagnosisForm, self).__init__(*args, **kwargs)
+    
+    class Meta:
+        model = Diagnosis
+        fields = ['patient', 'date', 'signal', 'diagnosis', 'comment']
+
+
+class SignalForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(SignalForm, self).__init__(*args, **kwargs)
+    
+    class Meta:
+        model = Signal
+        fields = ['parameters']
+
 
 class DatepickerWidget(forms.widgets.TextInput):
     def render(self, name, value, attrs=None):

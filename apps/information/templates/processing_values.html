@@ -32,10 +32,10 @@
   {% endif %}
 
   {% if button %}
-        <div class="pull-right">
-            <button type="button" class="btn btn-primary" onclick="{% if previous %}window.location.replace('{{ previous }}');{% else %}history.go(-1);{% endif %}">{% if cancel %}{{cancel}}{% else %}Cancel{% endif %}</button>
-            <button type="submit" class="btn btn-primary">{{button}}</button>
-        </div>
+    <div class="pull-right">
+      <button type="button" class="btn btn-primary" onclick="{% if previous %}window.location.replace('{{ previous }}');{% else %}history.go(-1);{% endif %}">{% if cancel %}{{cancel}}{% else %}Cancel{% endif %}</button>
+      <button type="submit" class="btn btn-primary">{{button}}</button>
+    </div>
   {% endif %}
     </form>
 {% endblock %}

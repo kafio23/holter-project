@@ -8,7 +8,7 @@ from django.views.generic import TemplateView
 from django.core.urlresolvers import reverse
 
 from .models import Diagnosis, Signal
-from .forms import SignalProcessingForm
+from .forms import SignalProcessingForm, DiagnosisForm, SignalForm
 from .utils.ecg_plotter import signal_processing, signal_processing_original
 
 from apps.person.models import Patient
@@ -31,10 +31,27 @@ def diagnosis_edit(request, patient_id, diag_id):
     diagnosis = get_object_or_404(Diagnosis, pk=diag_id)
     patient   = diagnosis.patient 
 
+    if request.method=='GET':
+        form = DiagnosisForm(instance=diagnosis)
+        signal_form = SignalForm(instance=diagnosis.signal)
+    
+    if request.method=='POST':
+        form = DiagnosisForm(request.POST, instance=diagnosis)
+        signal_form = SignalForm(request.POST, instance=diagnosis.signal)
+        if signal_form.is_valid():
+            updated_signal = signal_form.save(commit=False)
+            updated_signal.save()
+        if form.is_valid():
+            updated_diagnosis = form.save(commit=False)
+            updated_diagnosis.save()
+            return redirect('url_patient_overview', patient_id=patient.pk)
+
     kwargs = {}
-    kwargs['patient'] = patient
-    kwargs['title']   = 'Diagnosis'
-    kwargs['suptitle'] = diagnosis.diagnosis
+    kwargs['patient']     = patient
+    kwargs['title']       = 'Diagnosis'
+    kwargs['suptitle']    = diagnosis.date
+    kwargs['form']        = form
+    kwargs['signal_form'] = signal_form
 
     return render(request, 'diagnosis_edit.html', kwargs)
 
