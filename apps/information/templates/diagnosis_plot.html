@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content-title %}{{title}}{% endblock %}
-{% block content-suptitle %}{{suptitle}}{% endblock %}
+{% block content-suptitle %}{{suptitle}}- {{diagnosis.signal.name}}{% endblock %}
 
 
 {% block content %}
@@ -32,10 +32,14 @@
   {# endfor #}
 </div>
 
-<a href="{% url 'url_processing_plots' patient.pk diagnosis.pk %}">
-  <i class="glyphicon glyphicon-cog"></i>
-  Signal Processing </a>
-
+<a href="#" class="btn btn-info" role="button">
+    <span class="glyphicon glyphicon-edit"></span>
+    Edit Parameters
+</a>
+<a href="{% url 'url_processing_plots' patient.pk diagnosis.pk %}" class="btn btn-success" role="button">
+    <span class="glyphicon glyphicon-cog"></span>
+    Processing Details
+</a>
 <!-- /.container -->
 
 {% endblock %}
