@@ -66,11 +66,9 @@ class PlotECG(TemplateView):
         patient   = diagnosis.patient
 
         signal_file = diagnosis.signal.name
-        try:
-            plot, values = signal_processing(signal_file)
-        except Exception as e:
-            plot_message = 'Peligro: {}'.format(str(e))
-            return redirect('url_diagnosis_plot', patient_id=patient.pk, diag_id=diagnosis.pk)
+        
+        plot, values = signal_processing(signal_file)
+        plot_message = 'Peligro: '
 
         plot_message = False
         if not values['suficiente_tiempo']:
@@ -140,11 +138,10 @@ class PlotsECG(TemplateView):
         patient   = diagnosis.patient
 
         signal_file = diagnosis.signal.name
-        try:
-            plot, values, event_plots = signal_processing(signal_file, divide_plots=True)
-        except Exception as e:
-            plot_message = 'Peligro: {}'.format(str(e))
-            return redirect('url_diagnosis_plot', patient_id=patient.pk, diag_id=diagnosis.pk)
+        
+        plot, values, event_plots = signal_processing(signal_file, divide_plots=True)
+        plot_message = 'Peligro: '
+        
         
         if values['FA']:
             result = 'Presencia de Evento: Posible Arritmia de Fibrilación auricular'
