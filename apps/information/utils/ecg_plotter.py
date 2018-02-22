@@ -102,7 +102,7 @@ def signal_processing(file_name, divide_plots=False):
 
     ## --------------- PROCESAMIENTO -----------------
     # Por encima de 10 segundos (tiempo total)
-    segundos_bloque = 10.0
+    segundos_bloque = 15.0
     sobra_bloque    = tiempo_total/segundos_bloque
     bloques         = list(frange(x_inicio, x_final, segundos_bloque))
 
@@ -123,6 +123,7 @@ def signal_processing(file_name, divide_plots=False):
     RRv_all = []
     RRv_all_plot=[]
     rr_mean       = 0
+    RRv_suma_all = []
 
     # Para saber si plotear ultima parte
     ploteosiono = False
@@ -133,6 +134,7 @@ def signal_processing(file_name, divide_plots=False):
     
     ## Resultado
     values = {'FA': False, 'ARRITMIA': False, 'ARRITMIA_GENERAL': False}
+    values['suficiente_tiempo'] = True
 
     # PROCESAMIENTO:
     if tiempo_total > segundos_bloque:    # Por encima de  10 segundos (tiempo total)
@@ -215,7 +217,6 @@ def signal_processing(file_name, divide_plots=False):
             
             # RR-VARIABILITY
             RRv_suma = 0
-            RRv_suma_all = []
             RRv_variamucho = False
             minimo_variacion = 0.6    ##CAMBIAR? por el momento bien 0.6 1.5
             porcentaje_prematuridad = 0.78
@@ -324,6 +325,7 @@ def signal_processing(file_name, divide_plots=False):
     
 
     else:
+        values['suficiente_tiempo'] = False
         print('No se adquirio suficiente tiempo')
 
 
@@ -388,6 +390,7 @@ def signal_processing(file_name, divide_plots=False):
 
     # ----------------R-R Interval Plot--------------------
     x_values = range(0, len(rr_values_all))
+    x_RRv_suma_all = range(0, len(RRv_suma_all))
     #rr_values_prom = sum(rr_values_all)/len(rr_values_all)
     
     rr_up = [1.1]*len(x_values)#[15]*len(x_values)
@@ -395,7 +398,7 @@ def signal_processing(file_name, divide_plots=False):
 
     trace5 = graph_objs.Scatter(
         x=x_values,
-        y=RRv_all,
+        y=RRv_suma_all,#RRv_all,
         mode='markers',
         name='Intervalos R-R'
     )

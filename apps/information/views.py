@@ -71,6 +71,10 @@ class PlotECG(TemplateView):
         except Exception as e:
             messages.error(kwargs, 'Problemas al abrir archivo: {}'.format(str(e)))
             return redirect('url_patient_overview', patient_id=patient.pk)
+
+        plot_message = False
+        if not values['suficiente_tiempo']:
+            plot_message = 'No se adquirio suficiente tiempo'
         
         if values['ARRITMIA_GENERAL']:
             result = 'Posible presencia de Evento Arritmico'
@@ -90,6 +94,8 @@ class PlotECG(TemplateView):
         context['rr_mean']       = values['rr_mean']
         context['up_rr_mean']    = values['up_rr_mean']
         context['down_rr_mean']  = values['down_rr_mean']
+
+        context['plot_message']  = plot_message
         
         return context
 
@@ -141,6 +147,10 @@ class PlotsECG(TemplateView):
         else:
             result = 'No se detecta presencia de Evento de Fibrilación Auricular'
 
+        plot_message = False
+        if not values['suficiente_tiempo']:
+            plot_message = 'No se adquirio suficiente tiempo'
+
         if values['ARRITMIA']:
             print('ARRITMIA')
 
@@ -158,7 +168,9 @@ class PlotsECG(TemplateView):
 
         context['eventos_num'] = []
         if values['tiempos_plots']:
-            context['eventos_num'] = len(values['tiempos_plots'])            
+            context['eventos_num'] = len(values['tiempos_plots'])    
+
+        context['plot_message']  = plot_message        
         
         return context
     
