@@ -10,10 +10,46 @@
 {# Display django.contrib.messages as Bootstrap alerts #}
 {% bootstrap_messages %}
 
+{% block content-title %}{{title}}{% endblock %}
+{% block content-suptitle %}{{suptitle}}{% endblock %}
+
 {% block content %}
 
-<div class="container">(:
+<div class="container">
+    <p>
+        Software que permite la visualización y procesamiento de señale cardiacas.
+    </p>
     
+    <div>
+        <h2>Buscar: </h2>
+    </div>
+
+    <div class="bs-example">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-6">
+                    <a  href="{% url 'url_doctors_list' %}" class="thumbnail">
+                        <img src="{% static "images/doctor.png" %}" alt="125x125">
+                        <br>
+                        Doctores
+                    </a>
+                </div>
+                <div class="col-xs-6">
+                    <a href="{% url 'url_patients_list' %}" class="thumbnail">
+                        <img src="{% static "images/patient.png" %}" alt="125x125">
+                        Pacientes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <br>
+    <br>
+    <p class="mb-0">El software que usas tiene la finalidad mejorar la calidad de vida de las personas. ¡Tomate de libertad de descargarlo y seguir mejorandolo!</p>
+    <blockquote class="blockquote">
+        <footer class="blockquote-footer">Atte. <br> <cite title="Source Title">Gabriela Garcia y Fiorella Quino </cite></footer>
+    </blockquote>
 </div>
 
 {% endblock %}
