@@ -4,7 +4,7 @@ from __future__ import absolute_import
 
 from django.db import models
 from django.shortcuts import get_object_or_404
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from apps.person.models import Doctor, Patient
 
 import datetime
@@ -29,10 +29,10 @@ class Signal(models.Model):
 
 
 class Diagnosis(models.Model):
-    doctor    = models.ForeignKey(Doctor, verbose_name='Doctor')
-    patient   = models.ForeignKey(Patient, verbose_name ='Paciente')
+    doctor    = models.ForeignKey(Doctor, verbose_name='Doctor', on_delete= models.DO_NOTHING)
+    patient   = models.ForeignKey(Patient, verbose_name ='Paciente', on_delete= models.DO_NOTHING)
     date      = models.DateField('Fecha', default=datetime.date.today, db_index=True)
-    signal    = models.ForeignKey(Signal, verbose_name='ECGsignal', null=True, blank=True)
+    signal    = models.ForeignKey(Signal, verbose_name='ECGsignal', null=True, blank=True, on_delete= models.DO_NOTHING)
     diagnosis = models.CharField(max_length=200)
     comment   = models.TextField(blank=True, null=True)
 
@@ -47,6 +47,6 @@ class Diagnosis(models.Model):
 
     def get_url_processing_plots(self):
         return reverse('url_processing_plots', args=[self.patient.pk, str(self.pk)])
-    
+
     def get_url_diagnosis_edit(self):
         return reverse('url_diagnosis_edit', args=[self.patient.pk, str(self.pk)])

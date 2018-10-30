@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.http.request import QueryDict
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
 
