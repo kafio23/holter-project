@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 #Plotly
 import plotly.plotly as py
@@ -83,7 +83,7 @@ def plot1d():
     )
     fig = go.Figure(data=data, layout=layout)
     plot_div = plot(fig, output_type='div', include_plotlyjs=False)
-    print "Number of points: %s" % len(x_data)
+    print("Number of points: %s" % len(x_data))
     return plot_div
 
 
@@ -93,8 +93,8 @@ class Plot1DView(TemplateView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(Plot1DView, self).get_context_data(**kwargs)
-        print 'HAHA'
-        print kwargs
+
+        print(kwargs)
         context['plot'] = plot1d()
         context['no_sidebar'] = True
         return context

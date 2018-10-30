@@ -1,4 +1,4 @@
-# This script helps to plot ECG signals. 
+# This script helps to plot ECG signals.
 
 import pandas as pd
 from plotly import graph_objs
@@ -37,7 +37,7 @@ def plot_ecg(file_name):
 
     x=df['x']
     y=df['y']
-    
+
     #-Agregado para aumentar tiempo 04-01-2018
     #print x
     print 'Aqui comienza AGREGADO'
@@ -77,9 +77,9 @@ def plot_ecg(file_name):
         x[xx]  = x[xx] + 150
     for xx in range(48000,51000):
         x[xx]  = x[xx] + 160
-        
-    
-    
+
+
+
     #-----------------------------------------
 
     #---------------- Processing Signal----------------
@@ -101,22 +101,22 @@ def plot_ecg(file_name):
     ecg_peaks = ecg_data[peaks_index]#-ecg_data[peaks_index]
     tm_peaks = x[peaks_index]
     tm_peaks = np.array(tm_peaks)
-    print 'Indices: ', peaks_index
-    print 'Picos Bajos: ', ecg_peaks
-    
+    print('Indices: ', peaks_index)
+    print('Picos Bajos: ', ecg_peaks)
+
     ## Segundos entre intervalos
     rateBPM_values = []
     rateBPM_sum    = 0
     if len(peaks_index) > 9:  #minimo 10 ciclos
         for i in range(1,len(peaks_index)):
             t_dif = tm_peaks[i]-tm_peaks[i-1]
-            rateBPM_values.append(t_dif) 
+            rateBPM_values.append(t_dif)
         rateBPM_sum = sum(rateBPM_values)
-    
+
     ## BPM
     rateBPM = len(tm_peaks)*1.0 / (x[x.last_valid_index()]-x[0]) * 60.0
-    print 'rateBPM: ', rateBPM
-    print 'Valores rateBPM: ', rateBPM_values
+    print('rateBPM: ', rateBPM)
+    print('Valores rateBPM: ', rateBPM_values)
 
     ## Mean R-R Interval
     rrmean_values = []
@@ -127,9 +127,9 @@ def plot_ecg(file_name):
 
     up_rr_mean = np.where(rateBPM_values>=(rr_mean*1.15))
     down_rr_mean = np.where(rateBPM_values<(rr_mean*0.85))
-    print 'RR-MEAN: ', rr_mean
-    print 'UP-rr-mean', up_rr_mean
-    print 'DOWN-rr-mean', down_rr_mean
+    print('RR-MEAN: ', rr_mean)
+    print('UP-rr-mean', up_rr_mean)
+    print('DOWN-rr-mean', down_rr_mean)
 
     ## Resultado
     values = {'FA': False}
@@ -137,7 +137,7 @@ def plot_ecg(file_name):
         values['FA'] = True
     if np.any(down_rr_mean):
         values['FA'] = True
-    
+
     values['rr_mean'] = rr_mean
     values['up_rr_mean'] = rr_mean*1.15
     values['down_rr_mean'] = rr_mean*0.85
@@ -148,9 +148,9 @@ def plot_ecg(file_name):
     cycles = []
     for i in range(0,len(peaks_index)-1):
         cycles.append('Intervalo R-R #'+str(i+1)+' - #'+str(i+2) +': '+str(rateBPM_values[i]))
-        
+
     values['cycles'] = cycles
-    print cycles
+    print(cycles)
     #--------------------------------------------------
 
     trace1 = graph_objs.Scatter(
@@ -160,7 +160,7 @@ def plot_ecg(file_name):
 
     layout = graph_objs.Layout(title='ECG ('+file_name+')',
                    plot_bgcolor='rgb(230, 230,230)')
-                   
+
     data = [trace1]
     fig = graph_objs.Figure(data=data, layout=layout)
     plot_div = plot(fig, output_type='div', include_plotlyjs=False)
@@ -182,13 +182,13 @@ def signal_processing_backup(file_name):
 
     x=df['x']
     y=df['y']
-    
+
     #-Agregado para aumentar tiempo 04-01-2018
     #print x
-    print 'Aqui comienza AGREGADO'
-    print x.__class__.__name__
-    print 'x[2999]= ', x[2999]
-    print 'x[3000]= ', x[3000]
+    print('Aqui comienza AGREGADO')
+    print(x.__class__.__name__)
+    print('x[2999]= ', x[2999])
+    print('x[3000]= ', x[3000])
     x1  = 2999+1
     for xx in range(3000,6000):
         x[xx]  = x[xx] + 10
@@ -222,9 +222,9 @@ def signal_processing_backup(file_name):
         x[xx]  = x[xx] + 150
     for xx in range(48000,51000):
         x[xx]  = x[xx] + 160
-        
-    
-    
+
+
+
     #-----------------------------------------
 
     #---------------- Processing Signal----------------
@@ -246,22 +246,22 @@ def signal_processing_backup(file_name):
     ecg_peaks = -ecg_data[peaks_index]
     tm_peaks = x[peaks_index]
     tm_peaks = np.array(tm_peaks)
-    print 'Indices: ', peaks_index
-    print 'Picos Bajos: ', ecg_peaks
-    
+    print('Indices: ', peaks_index)
+    print('Picos Bajos: ', ecg_peaks)
+
     ## Segundos entre intervalos
     rateBPM_values = []
     rateBPM_sum    = 0
     if len(peaks_index) > 9:  #minimo 10 ciclos
         for i in range(1,len(peaks_index)):
             t_dif = tm_peaks[i]-tm_peaks[i-1]
-            rateBPM_values.append(t_dif) 
+            rateBPM_values.append(t_dif)
         rateBPM_sum = sum(rateBPM_values)
-    
+
     ## BPM
     rateBPM = len(tm_peaks)*1.0 / (x[x.last_valid_index()]-x[0]) * 60.0
-    print 'rateBPM: ', rateBPM
-    print 'Valores rateBPM: ', rateBPM_values
+    print('rateBPM: ', rateBPM)
+    print('Valores rateBPM: ', rateBPM_values)
 
     ## Mean R-R Interval
     rrmean_values = []
@@ -272,9 +272,9 @@ def signal_processing_backup(file_name):
 
     up_rr_mean = np.where(rateBPM_values>=(rr_mean*1.15))
     down_rr_mean = np.where(rateBPM_values<(rr_mean*0.85))
-    print 'RR-MEAN: ', rr_mean
-    print 'UP-rr-mean', up_rr_mean
-    print 'DOWN-rr-mean', down_rr_mean
+    print('RR-MEAN: ', rr_mean)
+    print('UP-rr-mean', up_rr_mean)
+    print('DOWN-rr-mean', down_rr_mean)
 
     ## Resultado
     values = {'FA': False}
@@ -282,7 +282,7 @@ def signal_processing_backup(file_name):
         values['FA'] = True
     if np.any(down_rr_mean):
         values['FA'] = True
-    
+
     values['rr_mean'] = rr_mean
     values['up_rr_mean'] = rr_mean*1.15
     values['down_rr_mean'] = rr_mean*0.85
@@ -293,9 +293,9 @@ def signal_processing_backup(file_name):
     cycles = []
     for i in range(0,len(peaks_index)-1):
         cycles.append('Intervalo R-R #'+str(i+1)+' - #'+str(i+2) +': '+str(rateBPM_values[i]))
-        
+
     values['cycles'] = cycles
-    print cycles
+    print(cycles)
     #--------------------------------------------------
 
     trace1 = graph_objs.Scatter(
@@ -305,7 +305,7 @@ def signal_processing_backup(file_name):
 
     layout = graph_objs.Layout(title='ECG ('+file_name+')',
                    plot_bgcolor='rgb(230, 230,230)')
-                   
+
     data = [trace1]
     fig = graph_objs.Figure(data=data, layout=layout)
     plot_div = plot(fig, output_type='div', include_plotlyjs=False)
@@ -327,7 +327,7 @@ def signal_processing_backupULTIMO(file_name):
 
     x=df['X']
     y=df['Y']
-    
+
     #-Agregado para aumentar tiempo 04-01-2018
     #print x
     """print 'Aqui comienza AGREGADO'
@@ -371,13 +371,13 @@ def signal_processing_backupULTIMO(file_name):
     #-----------Agregado el 18 de enero 2018----------
     x           = np.array(x)
     y           = np.array(y)
-    
+
     x           = x-1             # Para que comience en 0 (cero) segundos
 
     x_inicial   = x[0]    # Inicio de muestra (segundos)
     x_final     = x[-1]     # Fin de muestra (segundos)
-    
-    total_tiempo = x_final-x_inicial 
+
+    total_tiempo = x_final-x_inicial
     fs           = 300.0
     sec_sample   = 1.0/fs
 
@@ -409,22 +409,22 @@ def signal_processing_backupULTIMO(file_name):
     ecg_peaks = ecg_data[peaks_index]
     tm_peaks = x[peaks_index]
     tm_peaks = np.array(tm_peaks)
-    print 'Indices: ', peaks_index
-    print 'Picos Bajos: ', ecg_peaks
-    
+    print('Indices: ', peaks_index)
+    print('Picos Bajos: ', ecg_peaks)
+
     ## Segundos entre intervalos
     rateBPM_values = []
     rateBPM_sum    = 0
     if len(peaks_index) > 9:  #minimo 10 ciclos
         for i in range(1,len(peaks_index)):
             t_dif = tm_peaks[i]-tm_peaks[i-1]
-            rateBPM_values.append(t_dif) 
+            rateBPM_values.append(t_dif)
         rateBPM_sum = sum(rateBPM_values)
-    
+
     ## BPM
     rateBPM = len(tm_peaks)*1.0 / (x[-1]-x[0]) * 60.0
-    print 'rateBPM: ', rateBPM
-    print 'Valores rateBPM: ', rateBPM_values
+    print('rateBPM: ', rateBPM)
+    print('Valores rateBPM: ', rateBPM_values)
 
     ## Mean R-R Interval
     rrmean_values = []
@@ -435,9 +435,9 @@ def signal_processing_backupULTIMO(file_name):
 
     up_rr_mean = np.where(rateBPM_values>=(rr_mean*1.15))
     down_rr_mean = np.where(rateBPM_values<(rr_mean*0.85))
-    print 'RR-MEAN: ', rr_mean
-    print 'UP-rr-mean', up_rr_mean
-    print 'DOWN-rr-mean', down_rr_mean
+    print('RR-MEAN: ', rr_mean)
+    print('UP-rr-mean', up_rr_mean)
+    print('DOWN-rr-mean', down_rr_mean)
 
     ## Resultado
     values = {'FA': False}
@@ -445,7 +445,7 @@ def signal_processing_backupULTIMO(file_name):
         values['FA'] = True
     if np.any(down_rr_mean):
         values['FA'] = True
-    
+
     values['rr_mean'] = rr_mean
     values['up_rr_mean'] = rr_mean*1.15
     values['down_rr_mean'] = rr_mean*0.85
@@ -456,9 +456,9 @@ def signal_processing_backupULTIMO(file_name):
     cycles = []
     for i in range(0,len(peaks_index)-1):
         cycles.append('Intervalo R-R #'+str(i+1)+' - #'+str(i+2) +': '+str(rateBPM_values[i]))
-        
+
     values['cycles'] = cycles
-    print cycles
+    print(cycles)
     #--------------------------------------------------
 
     trace1 = graph_objs.Scatter(
@@ -468,7 +468,7 @@ def signal_processing_backupULTIMO(file_name):
 
     layout = graph_objs.Layout(title='ECG ('+file_name+')',
                    plot_bgcolor='rgb(230, 230,230)')
-                   
+
     data = [trace1]
     fig = graph_objs.Figure(data=data, layout=layout)
     plot_div = plot(fig, output_type='div', include_plotlyjs=False)
@@ -493,7 +493,7 @@ def signal_processing(file_name):
 
     x=df['X']
     y=df['Y']
-    
+
     # Frecuencia de Muestro
     Fs = 300
 
@@ -506,7 +506,7 @@ def signal_processing(file_name):
     y = y[1500:-1]
     x = (x/1000.0)-1          # Para empezar desde 0 segundos
     y = y/1000.0
-    
+
     # Inicio de muestra (segundos)
     x_inicio1 = x[0]
     x_decimal = x_inicio1-math.floor(x_inicio1)
@@ -515,7 +515,7 @@ def signal_processing(file_name):
     x_final1 = x[-1]
     x_decimal_fin = x_final1 - math.floor(x_final1)
     x_final = (x_decimal_fin * 0.999) / 0.299 + math.floor(x_final1)   ## PREGUNTAR
-    
+
     # TIEMPO Total de la SENAL
     tiempo_total = x_final - x_inicio
 
@@ -535,7 +535,7 @@ def signal_processing(file_name):
     taquicardia_mili  = 600.0             # Menor que 600 milisegundos
     bradicardia_mili  = 1000.0            # Mayor que 1000 milisegundos
 
-    ## ------------- CONVERSION DE BITS ---------------  
+    ## ------------- CONVERSION DE BITS ---------------
     num_bits = 12.0
     max_volt = 3.3
     y = (max_volt * y)/(2^int(num_bits))
@@ -585,7 +585,7 @@ def signal_processing(file_name):
                 t_bloque = t_bloque_parcial[indice_menores]     # Para t
                 y_bloque = y_bloque_parcial[indice_menores]     # Para y
 
-             
+
             # Filtro SALVITZKY para reducir ruido (y_smooth)
             order_sgolay = 7
             framelen = 21
@@ -598,9 +598,9 @@ def signal_processing(file_name):
                     order_sgolay = order_sgolay-1;
                     framelen = framelen-1
                 print('Se cambio el orden de Savitzky Golay\n')
-            
+
             y_smooth = signal.savgol_filter(y_bloque, framelen, order_sgolay)
-            
+
 
             # DETREND (Quitar la tendecia de la senal)   (y_detrend)
             p = polyfit((np.arange(len(y_smooth))),y_smooth,6)
@@ -618,10 +618,10 @@ def signal_processing(file_name):
 
             # DETECCION de PICOS
             y_max = max(y_normal)
-            print y_max
+            print(y_max)
             # umbral minimo del pico de la senal
             min_peak_value = y_max*0.4
-            
+
             # umbral minimo de pico (TEORICO)
             min_peak_value_theory = 0.2
             # Los picos deben ser si o si mayores a 0.29
@@ -630,14 +630,14 @@ def signal_processing(file_name):
                 min_peak_value = min_peak_value_theory
             # Picos: valores
             y_peaks = detect_peaks(y_normal, mph=min_peak_value, mpd=0.3, show=True)    # primer valor probado 0.150
-            print 'HAHAHAH'
-            print y_peaks
+
+            print(y_peaks)
             if y_peaks == []:
-                break     
-            t_peaks = t_bloque[y_peaks]           
+                break
+            t_peaks = t_bloque[y_peaks]
             y_peaks = y_normal[y_peaks]
-        
-            
+
+
             # RR-VARIABILITY
             RRv_suma = 0
             RRv_variamucho = False
@@ -646,7 +646,7 @@ def signal_processing(file_name):
             # RR - INTERVALOS
             rr_values    = []
             rr_promedio  = 0
-            
+
             # RR-MEAN
             fuerade_rrmean = False
 
@@ -668,7 +668,7 @@ def signal_processing(file_name):
                     pulso_ant = t_peaks[i3-1]
                     pulso_act = t_peaks[i3]
                     rr_values.append(pulso_act - pulso_ant)
-                
+
                 rr_suma = sum(rr_values)
                 rr_promedio = sum(rr_values)/len(t_peaks)
                 print('RR valores SUMA: '+str(rr_suma))
@@ -706,7 +706,7 @@ def signal_processing(file_name):
 
             # Para conteo de figuras
             cont_fig = cont_fig+1
-            
+
             # Para formar el Y FINAL
             for y_i in y_detrend:
                 y_final.append(y_i)
@@ -714,17 +714,17 @@ def signal_processing(file_name):
             # LOOP ULTIMO
             if last_loop:
                 break
-        
+
         ##----------- PLOT R-R Mean ------------
         rr_mean_prom = sum(rr_mean_values_all)/len(rr_mean_values_all)
 
-        print 'RR', rr_mean_values_all
-        print 'len(rr): ', len(rr_mean_values_all)
-        print 'RR mean prom',rr_mean_prom
+        print('RR', rr_mean_values_all)
+        print('len(rr): ', len(rr_mean_values_all))
+        print('RR mean prom',rr_mean_prom)
 
     else:
         print('No se adquirio suficiente tiempo')
-    
+
     ##################################################
     #---------------- Processing Signal----------------
     ## Filtro Pasa-Bajas
@@ -747,16 +747,16 @@ def signal_processing(file_name):
     tm_peaks = np.array(tm_peaks)
     #print 'Indices: ', peaks_index
     #print 'Picos Bajos: ', ecg_peaks
-    
+
     ## Segundos entre intervalos
     rateBPM_values = []
     rateBPM_sum    = 0
     if len(peaks_index) > 9:  #minimo 10 ciclos
         for i in range(1,len(peaks_index)):
             t_dif = tm_peaks[i]-tm_peaks[i-1]
-            rateBPM_values.append(t_dif) 
+            rateBPM_values.append(t_dif)
         rateBPM_sum = sum(rateBPM_values)
-    
+
     ## BPM
     #rateBPM = len(tm_peaks)*1.0 / (x[-1]-x[0]) * 60.0
     #print 'rateBPM: ', rateBPM
@@ -781,7 +781,7 @@ def signal_processing(file_name):
         values['FA'] = True
     if np.any(down_rr_mean):
         values['FA'] = True
-    
+
     values['rr_mean'] = rr_mean
     values['up_rr_mean'] = rr_mean*1.15
     values['down_rr_mean'] = rr_mean*0.85
@@ -792,19 +792,19 @@ def signal_processing(file_name):
     cycles = []
     #for i in range(0,len(peaks_index)-1):
     #    cycles.append('Intervalo R-R #'+str(i+1)+' - #'+str(i+2) +': '+str(rateBPM_values[i]))
-        
+
     #values['cycles'] = cycles
     #print cycles
     #--------------------------------------------------
 
     trace1 = graph_objs.Scatter(
-                        x=t, y=y_final, 
+                        x=t, y=y_final,
                         mode='lines', name='signal'
                         )
 
     layout = graph_objs.Layout(title='ECG ('+file_name+')',
                    plot_bgcolor='rgb(230, 230,230)')
-    print 'ESTO',rr_values_all[5]
+    print('ESTO',rr_values_all[5])
     ## ----------------- R-R Interval Plot --------------
     x_values = range(50, len(rr_values_all))
     trace2 = graph_objs.Scatter(
@@ -824,7 +824,7 @@ def signal_processing(file_name):
         name='Limite R-R'
     )
     # -----------------------------------------------------
-                   
+
     data = [trace1, trace2, trace3]
     fig = tools.make_subplots(rows=2, cols=1, subplot_titles=('ECG', 'R-R Variabilidad'))
     fig.append_trace(trace1, 1, 1)

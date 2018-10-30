@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.http.request import QueryDict
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
 
@@ -16,13 +16,13 @@ from .forms import UploadFileForm
 from apps.information.models import Diagnosis, Signal
 
 def doctors_list(request):
-    
+
     kwargs = {}
-    
+
     page = request.GET.get('page')
     order = ('last_name',)
     kwargs = get_paginator(Doctor, page, order)
-    print kwargs
+    print(kwargs)
     doctors = Doctor.objects.all()
 
     kwargs['no_sidebar'] = True
@@ -35,13 +35,13 @@ def doctors_list(request):
 
 
 def patients_list(request):
-    
+
     kwargs = {}
-    
+
     page = request.GET.get('page')
     order = ('last_name',)
     kwargs = get_paginator(Patient, page, order)
-    print kwargs
+    print(kwargs)
     patients = Patient.objects.all()
 
     kwargs['no_sidebar'] = True
@@ -132,15 +132,15 @@ def patient_upload(request, patient_id):
     doctor = doctors[0]
 
     if request.method == 'POST' and request.FILES['file']:
-        
+
         form = UploadFileForm(request.POST, request.FILES)
         path = 'data/'
 
         if form.is_valid():
             myfile   = request.FILES['file']
-            
+
             if myfile.name[-4:] == '.csv' or myfile.name[-4:] == '.txt' :
-                print 'SI .cvs or .txt'
+                print('SI .cvs or .txt')
             else:
                 messages.error(request, 'Ingresar archivo con formato valido (.csv)')
                 return HttpResponseRedirect(reverse('url_patient_upload', args=[patient_id]))
@@ -193,15 +193,15 @@ def signal_upload(request, patient_id):
     doctor = doctors[0]
 
     if request.method == 'POST' and request.FILES['file']:
-        
+
         form = UploadFileForm(request.POST, request.FILES)
         path = 'data/'
 
         if form.is_valid():
             myfile   = request.FILES['file']
-            
+
             if myfile.name[-4:] == '.csv' :
-                print 'SI'
+                print('SI')
             else:
                 messages.error(request, 'Ingresar archivo con formato valido (.csv)')
                 return HttpResponseRedirect(reverse('url_patient_upload', args=[patient_id]))
@@ -231,4 +231,3 @@ def signal_upload(request, patient_id):
     kwargs['button']   = 'Upload'
 
     return render(request, 'parameters_upload.html', kwargs)
-

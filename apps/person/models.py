@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.contrib.auth.models import User, UserManager
 from django.shortcuts import get_object_or_404
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from django.db import models
 
@@ -10,7 +10,7 @@ from django.db import models
 import datetime
 
 class Doctor(models.Model):
-    user = models.OneToOneField(User, primary_key=True, related_name='doctor')
+    user = models.OneToOneField(User, primary_key=True, related_name='doctor', on_delete=models.CASCADE)
     last_name = models.CharField(verbose_name='Apellido Paterno', max_length=50)
     second_last_name = models.CharField(verbose_name='Apellido Materno', max_length=32, blank=True, null=True)
     first_name = models.CharField(verbose_name='Primer Nombre', max_length=50)
@@ -26,7 +26,7 @@ class Doctor(models.Model):
 
 
 class Patient(models.Model):
-    user = models.OneToOneField(User, primary_key=True, related_name='patient')
+    user = models.OneToOneField(User, primary_key=True, related_name='patient', on_delete=models.CASCADE)
     last_name = models.CharField(verbose_name='Apellido Paterno', max_length=50)
     second_last_name = models.CharField(verbose_name='Apellido Materno', max_length=32, blank=True, null=True)
     first_name = models.CharField(verbose_name='Primer Nombre', max_length=50)
