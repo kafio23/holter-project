@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{block.super}}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <h1>Plot using Plot.ly</h1>
+  <p class="lead">Here we go...</p>
+</div>
+<!-- /.container -->
+
+<div class="col-md-12">
+  <div class="row" style="border: 1px solid black">
+    <div class="col-md-12">{{plot|safe}}</div>
+  </div>
+</div>
+<!-- /.container -->
+
+{% endblock %}

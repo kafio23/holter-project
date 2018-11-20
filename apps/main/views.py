@@ -13,3 +13,16 @@ def home(request):
     kwargs['title']      = '¡Bienvenido!'
     kwargs['suptitle']   = ''
     return render(request, 'main/body.html', kwargs)
+
+def tutorial(request):
+    kwargs = {}
+    kwargs['no_sidebar'] = True
+    kwargs['title']      = 'Tutorial'
+    return render(request, 'main/tutorial.html', kwargs)
+
+def about_us(request):
+    kwargs = {}
+    kwargs['no_sidebar'] = True
+    # kwargs['title']      = '¡Bienvenido!'
+    # kwargs['suptitle']   = ''
+    render(request, "about_us.html", kwargs)

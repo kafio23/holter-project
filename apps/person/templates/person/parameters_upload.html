@@ -1,0 +1,72 @@
+{% extends "main/base.html" %}
+{# load staticfiles #}
+{# load static #}
+{# Load CSS and JavaScript #}
+{# bootstrap_css #}
+
+{% block content-title %}Signal{% endblock %}
+{% block content-suptitle %}Upload{% endblock %}
+
+{% block content %}
+  {% if form.is_multipart %}
+    <form class="form" enctype="multipart/form-data" method="post" action="{{action}}">
+  {% else %}
+    <form class="form" method="post" action="{{action}}">
+  {% endif %}
+  {% csrf_token %}
+  {% bootstrap_form form layout='horizontal' size='medium' %}
+        <div style="clear: both;"></div>
+        
+    
+        <div class="form-group">
+          <label for="Select1">Bloque de n segundos:</label>
+          <select class="form-control" id="Select1">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="60">60</option>
+          </select>
+        </div>
+
+        <form class="form-inline">
+            <div class="form-group">
+              <label for="inputPassword6">Password</label>
+              <input type="password" id="inputPassword6" class="form-control mx-sm-3" aria-describedby="passwordHelpInline">
+              <small id="passwordHelpInline" class="text-muted">
+                Must be 8-20 characters long.
+              </small>
+            </div>
+        </form>
+
+        <div class="row">
+            <div class="col-lg-6">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input type="checkbox" aria-label="...">
+                </span>
+                <input type="text" class="form-control" aria-label="...">
+              </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
+            <div class="col-lg-6">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input type="radio" aria-label="...">
+                </span>
+                <input type="text" class="form-control" aria-label="...">
+              </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
+          </div><!-- /.row -->
+
+            <br>
+  {% if extra_button %}
+        <div class="pull-left">
+            <button type="button" class="btn btn-primary" id="bt_{{extra_button}}">{{extra_button}}</button>  
+        </div>
+  {% endif %}
+  {% if button %}
+        <div class="pull-right">
+            <button type="button" class="btn btn-primary" onclick="{% if previous %}window.location.replace('{{ previous }}');{% else %}history.go(-1);{% endif %}">{% if cancel %}{{cancel}}{% else %}Cancel{% endif %}</button>
+            <button type="submit" class="btn btn-primary">{{button}}</button>
+        </div>
+  {% endif %}
+    </form>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "main/base.html" %}
+{# load bootstrap3 #}
+{# load static #}
+{# load main_tags #}
+
+{% block search-active %}active{% endblock %}
+{% block content-title %}{{title}}{% endblock %}
+{% block content-suptitle %}{{suptitle}}{% endblock %}
+
+
+{% block content %}
+<div style="clear: both;"></div>
+<br>
+<table class="table table-hover">
+  <tr>
+    <th>#</th>
+    {% for key in keys %}
+    <th>{{ key|title }}</th>
+    {% endfor%}
+    <th>Actions</th>
+  </tr>
+
+  {% for object in objects %}
+    <tr class="clickable-row" data-href="{{ object.get_url_diagnosis_plot }}" id="diagnosis-{{object.pk}}">
+      <td>{{ forloop.counter }}</td> {# forloop.counter|add:offset #}
+      {% for key in keys %}
+      <td>{{ object|attr:key }}</td>
+      {% endfor %}
+      <td>
+        <a href="{{object.get_url_diagnosis_edit}}" class="btn btn-info" role="button">
+          <span class="glyphicon glyphicon-edit"></span>
+          Edit
+        </a>
+        <a href="{{object.get_url_diagnosis_plot}}" class="btn btn-success" role="button">
+          <span class="glyphicon glyphicon-eye-open"></span>
+          Signal
+        </a>
+      </td>
+    </tr>
+  {% endfor %}
+</table>
+{% endblock %}
+
+{% block extra-js%}
+<script>
+$(document).ready(function() {
+
+{% for object in objects %}
+
+    $(".clickable-row").click(function() {
+        document.location = $(this).data("href");
+    });
+
+{% endfor %}
+
+});
+</script>
+{% endblock %}

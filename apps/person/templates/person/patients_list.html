@@ -1,0 +1,17 @@
+{% extends "main/base_list.html" %}
+
+{% block extra-js%}
+<script>
+$(document).ready(function() {
+
+{% for key in keys %}
+
+    $(".clickable-row").click(function() {
+        document.location = $(this).data("href");
+    });
+
+{% endfor %}
+
+});
+</script>
+{% endblock %}
