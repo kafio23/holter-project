@@ -2,12 +2,13 @@
 *.pyc
 .project
 *.sqlite3
-*vscode
+*.vscode
 *000*
 .DS_Store
 *.csv
 *.jpg
 db.sqlite3
+__pycache__
 
 # https://gist.github.com/octocat/9257657
 holter_project/db.sqlite3

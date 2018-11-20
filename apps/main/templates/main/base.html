@@ -1,0 +1,135 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+  <head>
+    {% block head %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    {% endblock %}
+
+    {% block extra-head %}
+    {% endblock %}
+
+    <title>Holter Monitor</title>
+  </head>
+  <body>
+
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+        <a class="navbar-brand" href="{% url 'index' %}" style="padding-top:1px"><img width="50" height="45" class="d-inline-block align-bottom" alt="Holter" src="{% static "images/heart-beat.png" %}"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+    
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'url_home' %}">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{# url 'url_doctors_list' #}">Doctores</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{# url 'url_patients_list' #}">Pacientes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{# url 'url_tutorial' #}">Tutorial</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{# url 'url_tutorial' #}">Acerca de</a>
+                </li>
+            </ul>
+            <div class="form-inline my-2 my-lg-0">
+            {# if user.is_authenticated #}
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Hi {# user.username #}
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#">Control Panel</a>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'url_logout' %}">Logout</a>
+                    </div>
+                </div>
+            {# else #}
+                <a href="#"  style="padding-right: 10px;"><span class="oi oi-person"></span> Sign Up</a>
+                <a href="{% url 'url_login' %}?next={{request.get_full_path}}"><span class="oi oi-account-login"></span> Login</a>
+            {# endif #}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="padding-top: 10px;">
+
+        <div id="page" class="row" style="min-height:600px;">
+            {% if no_sidebar %}
+              <div class="col-sm col-md" role="complementary">
+            {% else %}
+              <div class="col-sm-3 col-md-3" role="complementary">
+                  <br><br>
+                  <div id="sidebar">
+                  {% block sidebar%}
+                        {% include "sidebar1.html" %}
+                  {% endblock %}
+                  </div>
+              </div>
+            {% endif %}
+  
+            {% if no_sidebar %}
+              <div class="col-sm-12 col-md-12" role="main">
+            {% else %}
+              <div class="col-sm-9 col-md-12" role="main">
+            {% endif %}
+  
+            <div class="page-header">
+                <h1>{% block content-title %}{% endblock %} <small>{% block content-suptitle %}{% endblock %}</small></h1>
+            </div>
+  
+            {% block messages %}
+              {% if messages %}
+                  {% for message in messages %}
+                      <div class="alert alert-{% if message.tags %}{% if 'error' in message.tags %}danger{% else %}{{ message.tags }}{% endif %}{% else %}info{% endif %} alert-dismissible" role="alert">
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          <strong>{{message.tags|title}}!</strong> {{ message }}
+                      </div>
+                  {% endfor %}
+              {% endif %}
+            {% endblock %}
+  
+            {% block content %}
+  
+                <!--CODE!-->
+  
+            {% endblock %}
+  
+              </div>
+              </div>
+        </div><!--/row-->
+      </div><!--/container-->
+
+    {% block footer %}
+      <footer class="footer">
+        <div class="container">
+        <p><hr></p>
+        <p>
+        &copy; <a href="http://www.upc.edu.pe">Universidad Peruana de Ciencias Aplicadas</a> - {% now "Y" %}
+        </p>
+        </div>
+      </footer>
+    {% endblock %}
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    
+    {% block extra-js %}
+    {% endblock %}
+
+  </body>
+</html>
