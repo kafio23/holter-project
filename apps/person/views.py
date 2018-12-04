@@ -124,8 +124,8 @@ def patient_overview(request, patient_id):
 def patient_upload(request, patient_id):
 
     patient = get_object_or_404(Patient, pk=patient_id)
-    doctors  = Doctor.objects.all()
-    doctor = doctors[0]
+    # doctors  = Doctor.objects.all()
+    # doctor = doctors[0]
 
     if request.method == 'POST' and request.FILES['file']:
 

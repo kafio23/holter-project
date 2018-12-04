@@ -1,5 +1,5 @@
 {% extends "main/base.html" %}
-
+{% load bootstrap %}
 {% block content-title %}Signal{% endblock %}
 {% block content-suptitle %}Upload{% endblock %}
 
@@ -10,7 +10,7 @@
     <form class="form" method="post" action="{{action}}">
   {% endif %}
   {% csrf_token %}
-  {% bootstrap_form form layout='horizontal' size='medium' %}
+  {{ form|bootstrap_horizontal:'col-md-4' }}
         <div style="clear: both;"></div>
             <br>
   {% if extra_button %}
