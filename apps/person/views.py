@@ -121,6 +121,20 @@ def patient_overview(request, patient_id):
     return render(request, 'person/patient_overview.html', kwargs)
 
 
+def patient_show(request, patient_id):
+
+    patient   = get_object_or_404(Patient, pk=patient_id)
+    diagnosis = Diagnosis.objects.filter(patient=patient)
+
+    kwargs = {}
+    kwargs['patient'] = patient
+    kwargs['objects'] = diagnosis
+    kwargs['title']   = 'Patient'
+    kwargs['no_sidebar'] = True
+
+    return render(request, 'person/patient_show.html', kwargs)
+
+
 def patient_upload(request, patient_id):
 
     patient = get_object_or_404(Patient, pk=patient_id)

@@ -1,0 +1,43 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block content-title %}{{title}}{% endblock %}
+
+{% block content %}
+
+<div class="row user-profile">
+	<div class="col-6 col-md-3">
+		<div class="profile-userpic">
+				<img src="{% static 'images/user.png' %}" class="img-responsive" alt="" style="width: 10rem;">
+		</div>
+	</div>
+	<div class="col-6 col-md-9">
+		<div class="profile-userinf">
+			<div class="profile-userinf-name">
+					ID-{{patient.pk}}: {{patient}}
+			</div>
+			<div class="profile-userinf-job">
+					DNI: {{patient.dni}}
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="profile-submenu">
+	<ul class="nav nav-tabs">
+		<li class="nav-item">
+			<a class="nav-link active" href="#">Diagnosis</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="#">Upload Signal</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="#">Link</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link disabled" href="#">Disabled</a>
+		</li>
+	</ul>
+</div>
+
+{% endblock %}
