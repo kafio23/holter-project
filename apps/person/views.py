@@ -117,6 +117,7 @@ def patient_overview(request, patient_id):
     kwargs['title']   = 'Overview'
     kwargs['suptitle'] = patient.first_name+' '+patient.last_name
     kwargs['keys'] = ['doctor', 'diagnosis', 'signal', 'date']
+    kwargs['no_sidebar'] = True
 
     return render(request, 'person/patient_overview.html', kwargs)
 
@@ -164,6 +165,7 @@ def patient_upload(request, patient_id):
     kwargs['suptitle'] = patient.first_name
     kwargs['form']     = form
     kwargs['button']   = 'Upload'
+    kwargs['no_sidebar'] = True
 
     return render(request, 'person/patient_upload.html', kwargs)
 
