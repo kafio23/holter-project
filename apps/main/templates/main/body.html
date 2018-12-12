@@ -18,13 +18,13 @@
     <div class="main-select-images">
       <div class="row">
         <div class="col-sm col-md body-main-image">
-            <a href="{# url 'url_doctors_list' #}" class="thumbnail">
+            <a href="{% url 'url_doctors_list' %}" class="thumbnail">
                 <img src="{% static "images/doctor.png" %}" alt="125x125">
                 <span class="body-image-title">Doctores</span>
             </a>
         </div>
         <div class="col-sm col-md body-main-image">
-            <a href="{# url 'url_patients_list' #}" class="thumbnail">
+            <a href="{% url 'url_patients_list' %}" class="thumbnail">
                 <img width="225" height="225" src="{% static "images/patient.png" %}" alt="125x125">
                 <span class="body-image-title">Pacientes</span>
             </a>

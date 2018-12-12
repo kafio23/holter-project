@@ -1,3 +1,16 @@
 .main-select-images {
   text-align: center;
 }
+
+.profile-userpic img {
+  width: 100%;
+}
+
+@media (max-width: 990px) {
+  .profile-userpic {
+    text-align: center;
+  }
+  .profile-userpic img {
+    width: 50%;
+  }
+}

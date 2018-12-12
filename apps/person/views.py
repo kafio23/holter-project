@@ -99,9 +99,9 @@ def patient_view(request, patient_id):
 
     kwargs = {}
     kwargs['patient'] = patient
-    kwargs['title']   = patient.last_name
-    kwargs['suptitle'] = patient.first_name
-    #kwargs['no_sidebar'] = True
+    kwargs['title']   = 'Patient'
+    kwargs['suptitle'] = patient
+    kwargs['no_sidebar'] = True
 
     return render(request, 'person/patient.html', kwargs)
 
