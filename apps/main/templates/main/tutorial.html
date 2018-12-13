@@ -5,6 +5,8 @@
 
 {% block content %}
 
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
 <ul class="nav nav-pills">
 <li class="nav-item">
 <a class="nav-link active" href="#">Active</a>
@@ -20,4 +22,16 @@
 </li>
 </ul>
 
+<div class="col-md-12">
+    <div class="row" style="border: 1px solid black">
+        <div class="col-md-12">{{plot|safe}}</div>
+    </div>
+</div>
+
+
 {% endblock %}
+
+{% block extra-js %}
+<!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> -->
+{% endblock %}
+
