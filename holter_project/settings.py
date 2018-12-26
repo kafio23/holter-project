@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'apps.main',
     'apps.person',
     'apps.information',
+    'apps.tutorial'
 ]
 
 MIDDLEWARE = [

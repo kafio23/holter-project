@@ -6,6 +6,27 @@
   width: 100%;
 }
 
+img .tutorial-index-image {
+  width: 16px;
+  height: 16px;
+}
+.tutorial-index-image {
+  fill: #f00;
+}
+
+.my-svg-alternate {
+  display: none;
+}
+.no-svg .my-svg-alternate {
+  display: block;
+  width: 100px;
+  height: 100px;
+  background-image: url(image.png);
+}
+.ground:hover {
+  filter: url('/static/svg/info.svg');
+}
+
 @media (max-width: 990px) {
   .profile-userpic {
     text-align: center;
