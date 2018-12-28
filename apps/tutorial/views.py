@@ -40,5 +40,5 @@ class Plot1DView(TemplateView):
         context = super(Plot1DView, self).get_context_data(**kwargs)
         context['plot'] = plot1d()
         context['no_sidebar'] = True
-        context['title'] = 'Tutorial'
+        context['title'] = 'Tutoriales'
         return context
