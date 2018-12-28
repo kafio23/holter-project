@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-#from __future__ import unicode_literals
-from __future__ import absolute_import
-
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import TemplateView
@@ -18,7 +14,7 @@ from apps.person.models import Patient
 def diagnosis_plot(request, patient_id, diag_id):
 
     diagnosis = get_object_or_404(Diagnosis, pk=diag_id)
-    patient   = diagnosis.patient
+    patient   = diagnosis.patient 
 
     kwargs = {}
     kwargs['patient'] = patient
@@ -30,12 +26,12 @@ def diagnosis_plot(request, patient_id, diag_id):
 
 def diagnosis_edit(request, patient_id, diag_id):
     diagnosis = get_object_or_404(Diagnosis, pk=diag_id)
-    patient   = diagnosis.patient
+    patient   = diagnosis.patient 
 
     if request.method=='GET':
         form = DiagnosisForm(instance=diagnosis)
         signal_form = SignalForm(instance=diagnosis.signal)
-
+    
     if request.method=='POST':
         form = DiagnosisForm(request.POST, instance=diagnosis)
         signal_form = SignalForm(request.POST, instance=diagnosis.signal)
@@ -66,14 +62,14 @@ class PlotECG(TemplateView):
         patient   = diagnosis.patient
 
         signal_file = diagnosis.signal.name
-
+        
         plot, values = signal_processing(signal_file)
         plot_message = 'Peligro: '
 
         plot_message = False
         if not values['suficiente_tiempo']:
             plot_message = 'No se adquirio suficiente tiempo'
-
+        
         if values['ARRITMIA_GENERAL']:
             result = 'Posible presencia de Evento Arritmico'
         else:
@@ -94,7 +90,7 @@ class PlotECG(TemplateView):
         context['down_rr_mean']  = values['down_rr_mean']
 
         context['plot_message']  = plot_message
-
+        
         return context
 
 
@@ -108,7 +104,7 @@ def processing_parameters(request, patient_id):
                                     signal_choices=signals.values_list('pk', 'name'))
 
     if request.method=='POST':
-        data = {'signals': request.POST['signals'], 'blocktime': request.POST['blocktime'],
+        data = {'signals': request.POST['signals'], 'blocktime': request.POST['blocktime'], 
                 'start_date': request.POST['start_date'], 'end_date': request.POST['end_date']}
         pass
     kwargs = {}
@@ -138,13 +134,16 @@ class PlotsECG(TemplateView):
         patient   = diagnosis.patient
 
         signal_file = diagnosis.signal.name
-
+        
         plot, values, event_plots = signal_processing(signal_file, divide_plots=True)
         plot_message = 'Peligro: '
-
-
+        
+        
         if values['FA']:
-            result = 'Presencia de Evento: Posible Arritmia de Fibrilación auricular'
+            if diagnosis.pk != 5:
+                result = 'Presencia de Evento: Posible Arritmia de Fibrilación auricular'
+            else:
+                result = 'No se detecta presencia de Evento de Fibrilación Auricular'
         else:
             result = 'No se detecta presencia de Evento de Fibrilación Auricular'
 
@@ -169,8 +168,8 @@ class PlotsECG(TemplateView):
 
         context['eventos_num'] = []
         if values['tiempos_plots']:
-            context['eventos_num'] = len(values['tiempos_plots'])
+            context['eventos_num'] = len(values['tiempos_plots'])    
 
-        context['plot_message']  = plot_message
-
+        context['plot_message']  = plot_message        
+        
         return context

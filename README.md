@@ -7,13 +7,19 @@ Thesis project.
 Authors: Fiorella Quino O. and Gabriela Garcia G.
 Lima - Peru (2017-2018)
 
+* Python 3.7
+* Django 2.1
+
 # Installing Web App
 
-clone project
+1. Clone the project
+
+2. Execute these commands
 
 ```
 pip install -r requirements.txt
 python manage.py makemigrations
 python manage.py migrate
+python manage.py createsuperuser
 python manage.py runserver
 ```

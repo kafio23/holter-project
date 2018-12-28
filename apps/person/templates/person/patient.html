@@ -1,0 +1,64 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block content-title %}{{title}}{% endblock %}
+{% block content-suptitle %}{{suptitle}}{% endblock %}
+
+{% block content %}
+
+<div class="profile-sidebar">
+  <!-- SIDEBAR USERPIC -->
+  <div class="row">
+
+    <div class="col-sm-2">
+      <div class="profile-userpic">
+        <img src="{% static 'images/user.png' %}" class="img-responsive" alt="">
+      </div>
+    </div>
+  
+    <div class="col-sm-7">
+      <div class="profile-usertitle">
+        <div class="profile-usertitle-name">
+          <h5>
+            ID-{{patient.pk}}: {{patient}}
+          </h5>
+        </div>
+        <div class="profile-usertitle-job">
+          <h5>
+            DNI: {{patient.dni}}
+          </h5>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <br>
+  
+  <div class="row">
+    <div class="col-sm-3">
+        <nav class="nav flex-column">
+          <a class="nav-link active" href="#">Profile</a>
+          <a class="nav-link" href="#">Diagnosis</a>
+          <a class="nav-link" href="{% url 'url_patient_upload' patient.pk %}">Upload Signal</a>
+          <a class="nav-link disabled" href="#">Disabled</a>
+        </nav>
+      </div>
+  </div>
+
+  <!-- <div class="profile-userpic">
+      <img src="{% static 'images/user.png' %}" class="img-responsive" alt="">
+  </div> -->
+  <!-- END SIDEBAR USERPIC -->
+  <!-- SIDEBAR USER TITLE -->
+  <!-- <div class="profile-usertitle">
+      <div class="profile-usertitle-name">
+          ID-{{patient.pk}}: {{patient}}
+      </div>
+      <div class="profile-usertitle-job">
+          DNI: {{patient.dni}}
+      </div>
+  </div> -->
+</div>
+
+{% endblock %}

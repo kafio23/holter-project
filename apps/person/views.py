@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-#from __future__ import unicode_literals
-from __future__ import absolute_import
+from django.shortcuts import render
 
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
@@ -26,12 +24,11 @@ def doctors_list(request):
     doctors = Doctor.objects.all()
 
     kwargs['no_sidebar'] = True
-    #kwargs['key'] = doctors
     kwargs['keys'] = ['last_name','first_name']
     kwargs['title'] = 'Doctores'
     kwargs['suptitle'] = 'Cardiología'
 
-    return render(request, 'doctors_list.html', kwargs)
+    return render(request, 'person/doctors_list.html', kwargs)
 
 
 def patients_list(request):
@@ -45,12 +42,11 @@ def patients_list(request):
     patients = Patient.objects.all()
 
     kwargs['no_sidebar'] = True
-    #kwargs['key'] = doctors
     kwargs['keys'] = ['last_name','first_name']
     kwargs['title'] = 'Pacientes'
     kwargs['suptitle'] = 'Cardiología'
 
-    return render(request, 'patients_list.html', kwargs)
+    return render(request, 'person/patients_list.html', kwargs)
 
 
 def get_paginator(model, page, order, filters={}, n=10):
@@ -103,11 +99,11 @@ def patient_view(request, patient_id):
 
     kwargs = {}
     kwargs['patient'] = patient
-    kwargs['title']   = patient.last_name
-    kwargs['suptitle'] = patient.first_name
-    #kwargs['no_sidebar'] = True
+    kwargs['title']   = 'Patient'
+    kwargs['suptitle'] = patient
+    kwargs['no_sidebar'] = True
 
-    return render(request, 'patient.html', kwargs)
+    return render(request, 'person/patient.html', kwargs)
 
 
 def patient_overview(request, patient_id):
@@ -121,8 +117,9 @@ def patient_overview(request, patient_id):
     kwargs['title']   = 'Overview'
     kwargs['suptitle'] = patient.first_name+' '+patient.last_name
     kwargs['keys'] = ['doctor', 'diagnosis', 'signal', 'date']
+    kwargs['no_sidebar'] = True
 
-    return render(request, 'patient_overview.html', kwargs)
+    return render(request, 'person/patient_overview.html', kwargs)
 
 
 def patient_upload(request, patient_id):
@@ -168,8 +165,9 @@ def patient_upload(request, patient_id):
     kwargs['suptitle'] = patient.first_name
     kwargs['form']     = form
     kwargs['button']   = 'Upload'
+    kwargs['no_sidebar'] = True
 
-    return render(request, 'patient_upload.html', kwargs)
+    return render(request, 'person/patient_upload.html', kwargs)
 
 
 
@@ -230,4 +228,4 @@ def signal_upload(request, patient_id):
     kwargs['form']     = form
     kwargs['button']   = 'Upload'
 
-    return render(request, 'parameters_upload.html', kwargs)
+    return render(request, 'person/parameters_upload.html', kwargs)

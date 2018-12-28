@@ -1,22 +1,7 @@
-# -*- coding: utf-8 -*-
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.views.generic import TemplateView
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-
-#Plotly
-import plotly.plotly as py
-from plotly.graph_objs import *
-from plotly.offline import plot
-import plotly.graph_objs as go
-
-import pandas as pd
-import numpy as np
-
-import os
-import datetime
-
+from django.views.generic import TemplateView
 
 def index(request):
     #return HttpResponse("Hello, world. You're at the polls index.")
@@ -28,38 +13,63 @@ def home(request):
     kwargs['no_sidebar'] = True
     kwargs['title']      = '¡Bienvenido!'
     kwargs['suptitle']   = ''
-    return render(request, 'body.html', kwargs)
+    return render(request, 'main/body.html', kwargs)
 
-def plot_graph():
+# def tutorial(request):
+#     kwargs = {}
+#     kwargs['no_sidebar'] = True
+#     kwargs['title']      = 'Tutorial'
+#     return render(request, 'main/tutorial.html', kwargs)
 
-    import plotly
+import plotly.offline as opy
+import plotly.graph_objs as go
+import numpy as np
 
-    py = plotly.plotly(username='kafio', key='WHQcWnXsrvMrDtgDNHdT')
+class Graph(TemplateView):
+    template_name = 'main/tutorial.html'
+    kwargs = {}
+    kwargs['no_sidebar'] = True
 
-    y=0
-    t=0
-    dt=0.01
-    g=9.8
-    v=4
-    yp=[]
-    tp=[]
+    def get_context_data(self, **kwargs):
+        context = super(Graph, self).get_context_data(**kwargs)
 
-    while y>=0:
-        v=v-g*dt
-        y=y+v*dt
-        t=t+dt
-        yp=yp+[y]
-        tp=tp+[t]
+        # x = [-2,0,4,6,7]
+        # y = [q**2-q+3 for q in x]
+        # trace1 = go.Scatter(x=x, y=y, marker={'color': 'red', 'symbol': 104, 'size': "10"},
+        #                     mode="lines",  name='1st Trace')
 
+        # data=go.Data([trace1])
+        # layout=go.Layout(title="Meine Daten", xaxis={'title':'x1'}, yaxis={'title':'x2'})
+        # figure=go.Figure(data=data,layout=layout)
+        # div = opy.plot(figure, auto_open=False, output_type='div')
+        # import plotly.plotly as py
+        # import plotly.graph_objs as go
 
+        # Create random data with numpy
+        
 
-    response=py.plot(tp,yp)
-    url=response['url']
-    filename=response['filename']
-    print(url)
-    print(filename)
-    return
+        N = 1000
+        random_x = np.random.randn(N)
+        random_y = np.random.randn(N)
 
+        # Create a trace
+        trace = go.Scatter(
+            x = random_x,
+            y = random_y,
+            mode = 'markers'
+        )
+
+        data = [trace]
+
+        # Plot and embed in ipython notebook!
+        # div = opy.plot(data, filename='basic-scatter')
+        div = opy.plot(data, filename='basic-line')
+
+        # or plot with: plot_url = py.plot(data, filename='basic-line')
+
+        context['plot'] = div
+
+        return context, kwargs
 
 def plot1d():
     x_data = np.arange(0, 120,0.1)
@@ -82,123 +92,23 @@ def plot1d():
         )
     )
     fig = go.Figure(data=data, layout=layout)
-    plot_div = plot(fig, output_type='div', include_plotlyjs=False)
-    print("Number of points: %s" % len(x_data))
+    plot_div = opy.plot(fig, output_type='div', include_plotlyjs=False)
     return plot_div
 
 
 class Plot1DView(TemplateView):
-    template_name = "plot.html"
+    template_name = "main/tutorial.html"
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(Plot1DView, self).get_context_data(**kwargs)
-
-        print(kwargs)
         context['plot'] = plot1d()
         context['no_sidebar'] = True
         return context
 
-
-
-
-def plot2d():
-    t = np.linspace(-1,1,2000)
-    x = (t**2)+(0.5*np.random.randn(2000))
-    y = (t**2)+(0.5*np.random.randn(2000))
-
-    trace1 = go.Scatter(
-        x=x, y=y, mode='markers', name='points',
-        marker=dict(color='rgb(0,0,0)', size=2, opacity=0.4)
-    )
-    trace2 = go.Histogram2d(
-        x=x, y=y, name='density',
-        nbinsx=100, nbinsy=100,
-        colorscale='Jet', reversescale=False, showscale=True
-    )
-    trace3 = go.Histogram(
-        x=x, name='x density',
-        marker=dict(color='blue'),
-        yaxis='y2'
-    )
-    trace4 = go.Histogram(
-        y=y, name='y density', marker=dict(color='blue'),
-        xaxis='x2'
-    )
-    data = [trace1, trace2, trace3, trace4]
-
-    layout = go.Layout(
-        showlegend=False,
-        autosize=False,
-        width=800,
-        height=700,
-        xaxis=dict(
-            domain=[0, 0.85],
-            showgrid=False,
-            zeroline=False
-        ),
-        yaxis=dict(
-            domain=[0, 0.85],
-            showgrid=False,
-            zeroline=False
-        ),
-        margin=dict(
-            t=50
-        ),
-        hovermode='closest',
-        bargap=0,
-        xaxis2=dict(
-            domain=[0.85, 1],
-            showgrid=False,
-            zeroline=False
-        ),
-        yaxis2=dict(
-            domain=[0.85, 1],
-            showgrid=False,
-            zeroline=False
-        )
-    )
-
-    fig = go.Figure(data=data, layout=layout)
-    plot_div = plot(fig, output_type='div', include_plotlyjs=False)
-    return plot_div
-
-
-class Plot2DView(TemplateView):
-    template_name = "plot.html"
-
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super(Plot2DView, self).get_context_data(**kwargs)
-        context['plot'] = plot2d()
-        return context
-
-
-
-def plot_ecg():
-
-    df = pd.read_csv('/home/fiorella/workspace/holter_project/holter_project/data/ecg_mcv_title.csv')
-    trace1 = go.Scatter(
-                        x=df['x'], y=df['y'], # Data
-                        mode='lines', name='signal' # Additional options
-                        )
-
-    layout = go.Layout(title='Simple Plot from csv data',
-                   plot_bgcolor='rgb(230, 230,230)')
-
-    data = [trace1]
-    fig = go.Figure(data=data, layout=layout)
-    plot_div = plot(fig, output_type='div', include_plotlyjs=False)
-    return plot_div
-
-    return
-
-
-class PlotECG(TemplateView):
-    template_name = "plot.html"
-
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super(PlotECG, self).get_context_data(**kwargs)
-        context['plot'] = plot_ecg()
-        return context
+def about_us(request):
+    kwargs = {}
+    kwargs['no_sidebar'] = True
+    # kwargs['title']      = '¡Bienvenido!'
+    # kwargs['suptitle']   = ''
+    render(request, "about_us.html", kwargs)

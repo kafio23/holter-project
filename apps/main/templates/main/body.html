@@ -1,0 +1,44 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block content-title %}{{title}}{% endblock %}
+{% block content-suptitle %}{{suptitle}}{% endblock %}
+
+{% block content %}
+
+<div>
+    <p style="font-size:20px">
+        Software que permite la visualización y procesamiento de señales cardiacas.
+    </p>
+
+    <div>
+        <h2>Buscar: </h2>
+    </div>
+
+    <div class="main-select-images">
+      <div class="row">
+        <div class="col-sm col-md body-main-image">
+            <a href="{% url 'url_doctors_list' %}" class="thumbnail">
+                <img src="{% static "images/doctor.png" %}" alt="125x125">
+                <span class="body-image-title">Doctores</span>
+            </a>
+        </div>
+        <div class="col-sm col-md body-main-image">
+            <a href="{% url 'url_patients_list' %}" class="thumbnail">
+                <img width="225" height="225" src="{% static "images/patient.png" %}" alt="125x125">
+                <span class="body-image-title">Pacientes</span>
+            </a>
+        </div>
+      </div>
+    </div>
+
+    <br>
+    <br>
+
+    <blockquote class="blockquote">
+            <p style="font-size:15px">El software que usas tiene la finalidad de mejorar la calidad de vida de las personas. ¡Tómate de libertad de descargarlo y seguir mejorándolo! (:</p>
+        <footer class="blockquote-footer">Atte. <br> <cite title="Source Title">Gabriela Garcia y Fiorella Quino </cite></footer>
+    </blockquote>
+</div>
+
+{% endblock %}

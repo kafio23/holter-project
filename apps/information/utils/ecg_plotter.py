@@ -1,4 +1,4 @@
-# This script helps to plot ECG signals.
+# This script helps to plot ECG signals. 
 
 import pandas as pd
 from plotly import graph_objs
@@ -51,7 +51,7 @@ def signal_processing(file_name, divide_plots=False):
 
     x=df['X']
     y=df['Y']
-
+    
     # Frecuencia de Muestro
     Fs = 300
     rateBPM = 60
@@ -61,20 +61,23 @@ def signal_processing(file_name, divide_plots=False):
     x = np.array(x)
     y = np.array(y)
     # Para empezar en el segundo 5
-    x = x[1500:-1]
-    y = y[1500:-1]
+    try:
+        x = x[1500:10000]
+        y = y[1500:10000]
+    except:
+        pass
     x = (x/1000.0)-1          # Para empezar desde 0 segundos
     y = y/1000.0
-
+    
     # Inicio de muestra (segundos)
     x_inicio1 = x[0]
     x_decimal = x_inicio1-math.floor(x_inicio1)
-    x_inicio = (x_decimal * 0.999) / 0.299  + math.floor(x_inicio1)
+    x_inicio = (x_decimal * 0.999) / 0.299  + math.floor(x_inicio1)   
     # Final de muestra (segundos)
     x_final1 = x[-1]
     x_decimal_fin = x_final1 - math.floor(x_final1)
-    x_final = (x_decimal_fin * 0.999) / 0.299 + math.floor(x_final1)
-
+    x_final = (x_decimal_fin * 0.999) / 0.299 + math.floor(x_final1)   
+    
     # TIEMPO Total de la SENAL
     tiempo_total = x_final - x_inicio
 
@@ -94,7 +97,7 @@ def signal_processing(file_name, divide_plots=False):
     taquicardia_mili  = 600.0             # Menor que 600 milisegundos
     bradicardia_mili  = 1000.0            # Mayor que 1000 milisegundos
 
-    ## ------------- CONVERSION DE BITS ---------------
+    ## ------------- CONVERSION DE BITS ---------------  
     num_bits = 12.0
     max_volt = 3.3
     y = (max_volt * y)/(2^int(num_bits))
@@ -131,7 +134,7 @@ def signal_processing(file_name, divide_plots=False):
     y_peaks=[]
     t_peaks = []
     picos_todos = []
-
+    
     ## Resultado
     values = {'FA': False, 'ARRITMIA': False, 'ARRITMIA_GENERAL': False}
     values['suficiente_tiempo'] = True
@@ -144,13 +147,13 @@ def signal_processing(file_name, divide_plots=False):
             if (ultimate_i < x_final) and ((x_final-ultimate_i) < (segundos_bloque/2)):
 
                 # Datos de BLOQUE
-                indice_mayores = (i <= t)
+                indice_mayores = (i <= t)                       
                 t_bloque_parcial = t[indice_mayores]            # Para t
                 y_bloque_parcial = y[indice_mayores]            # Para y
                 indice_menores = (t_bloque_parcial <= x_final)
                 t_bloque = t_bloque_parcial[indice_menores]     # Para t
                 y_bloque = y_bloque_parcial[indice_menores]     # Para y
-
+                
 
                 last_loop = True
             else:
@@ -162,7 +165,7 @@ def signal_processing(file_name, divide_plots=False):
                 t_bloque = t_bloque_parcial[indice_menores]     # Para t
                 y_bloque = y_bloque_parcial[indice_menores]     # Para y
 
-
+             
             # Filtro SALVITZKY para reducir ruido (y_smooth)
             order_sgolay = 7
             framelen = 21
@@ -175,9 +178,9 @@ def signal_processing(file_name, divide_plots=False):
                     order_sgolay = order_sgolay-1;
                     framelen = framelen-1
                 print('Se cambio el orden de Savitzky Golay\n')
-
+            
             y_smooth = signal.savgol_filter(y_bloque, framelen, order_sgolay)
-
+            
 
             # DETREND (Quitar la tendecia de la senal)   (y_detrend)
             p = polyfit((np.arange(len(y_smooth))),y_smooth,6)
@@ -196,7 +199,7 @@ def signal_processing(file_name, divide_plots=False):
 
             # umbral minimo del pico de la senal
             min_peak_value = y_max*0.4
-
+            
             # umbral minimo de pico (TEORICO)
             min_peak_value_theory = 0.2
             # Los picos deben ser si o si mayores a 0.29
@@ -205,16 +208,16 @@ def signal_processing(file_name, divide_plots=False):
                 min_peak_value = min_peak_value_theory
             # Picos: valores
             index_peaks = detect_peaks(y_normal, mph=min_peak_value, mpd=0.3, show=True)    # primer valor probado 0.150
-
+            
             if index_peaks == []:
-                break
-            t_peaks = t_bloque[index_peaks]
+                break     
+            t_peaks = t_bloque[index_peaks]           
             y_peaks = y_normal[index_peaks]
 
             #Colocar todos los picos:
             for peak in y_peaks:
                 picos_todos.append(peak)
-
+            
             # RR-VARIABILITY
             RRv_suma = 0
             RRv_variamucho = False
@@ -244,7 +247,7 @@ def signal_processing(file_name, divide_plots=False):
 
                 if RRv_suma > minimo_variacion:
                     RRv_variamucho = True
-
+                             
 
                 # RR - INTERVALOS (segundos)
                 for i3 in range(1,len(t_peaks)):
@@ -252,21 +255,21 @@ def signal_processing(file_name, divide_plots=False):
                     pulso_ant = t_peaks[i3-1]
                     pulso_act = t_peaks[i3]
                     rr_values.append(pulso_act - pulso_ant)
-
+                
                 #  de RRv para plot!!
                 RRv_hahas = [RRv_suma]*len(rr_values)  ## REVISAR DESCOMENTAR
-                #RRv_hahas = RRv_suma_sola*len(rr_values)
+                #RRv_hahas = RRv_suma_sola*len(rr_values) 
                 for RRv_haha in RRv_hahas:
                     RRv_all.append(RRv_haha)
-
-
+                
+                
                 rr_suma = sum(rr_values)
                 rr_promedio = sum(rr_values)/len(t_peaks)
-
+                
                 # Asignamos al rr_values total
                 for rr_val in rr_values:                ## REVISAR!!
                     rr_values_all.append(rr_val)
-
+                
                 # MEAN R-R Interval (se toma rr_values anterior)
                 rr_mean       = 0
                 for i4 in range(0,len(rr_values)):
@@ -277,13 +280,13 @@ def signal_processing(file_name, divide_plots=False):
                     rr_mean_values_all.append(rrmean_value)
 
                 # Valores R-R Limites
-                up_rr_true = []  # Los valores mayores a
+                up_rr_true = []  # Los valores mayores a 
                 up_mean_rrvalues = [i21 for i21 in rr_values if i21 >= (rr_mean*1.35)]  #2.5+0.5##ESSTO QUEDA
-
-                down_rr_true = []  # Los valores mayores a
+                
+                down_rr_true = []  # Los valores mayores a 
                 down_mean_rrvalues = [i22 for i22 in rr_values if i22 <= (rr_mean*0.85)]  #0.1-0.5
 
-
+                
                 if (len(up_mean_rrvalues) + len(down_mean_rrvalues)) > 1:
                     fuerade_rrmean = True
                 elif up_mean_rrvalues or down_mean_rrvalues:
@@ -314,7 +317,7 @@ def signal_processing(file_name, divide_plots=False):
 
             # Para conteo de figuras
             cont_fig = cont_fig+1
-
+            
             # Para formar el Y FINAL
             for y_i in y_detrend:
                 y_final.append(y_i)
@@ -322,7 +325,7 @@ def signal_processing(file_name, divide_plots=False):
             # LOOP ULTIMO
             if last_loop:
                 break
-
+    
 
     else:
         values['suficiente_tiempo'] = False
@@ -341,23 +344,23 @@ def signal_processing(file_name, divide_plots=False):
 
     for i in range(0,len(y_peaks)-1):
         cycles.append('Intervalo R-R #'+str(i+1)+' - #'+str(i+2) +': '+str(rateBPM))
-
+        
     values['cycles'] = cycles
 
     #--------------------------------------------------
 
     trace1 = graph_objs.Scatter(
-                        x=t, y=y_final,
+                        x=t, y=y_final, 
                         mode='lines', name='signal'
                         )
 
     layout = graph_objs.Layout(title='ECG ('+file_name+')',
                    plot_bgcolor='rgb(230, 230,230)')
-
+    
 
     ## ----------------- R-R MEAN Interval Plot --------------
     x_values_mean = range(0, len(rr_values_all))
-
+    
     ups_mean = []
     for rr_up_mean in rr_mean_values_all:
         ups_mean.append(rr_up_mean*1.35) #2.5+0.5
@@ -367,8 +370,8 @@ def signal_processing(file_name, divide_plots=False):
     for down_up_mean in rr_mean_values_all:
         downs_mean.append(down_up_mean*0.85) #0.1-0.5
     x_values_mean2 = range(0, len(downs_mean))
-
-
+    
+    
     trace2 = graph_objs.Scatter(
         x=x_values_mean,
         y=rr_values_all,
@@ -380,7 +383,7 @@ def signal_processing(file_name, divide_plots=False):
         y=ups_mean,
         name='Limite MEAN R-R'
     )
-
+    
     trace4 = graph_objs.Scatter(
         x=x_values_mean2,
         y=downs_mean,
@@ -392,7 +395,7 @@ def signal_processing(file_name, divide_plots=False):
     x_values = range(0, len(rr_values_all))
     x_RRv_suma_all = range(0, len(RRv_suma_all))
     #rr_values_prom = sum(rr_values_all)/len(rr_values_all)
-
+    
     rr_up = [1.1]*len(x_values)#[15]*len(x_values)
     rr_down = [0]*len(x_values)#[0]*len(x_values)
 
@@ -412,7 +415,7 @@ def signal_processing(file_name, divide_plots=False):
         y=rr_down,#[sum(RRv_all)/len(RRv_all)*0.85, sum(RRv_all)/len(RRv_all)*0.85],#y=[rr_mean_prom*0.85, rr_mean_prom*0.85],
         name='Limite R-R'
     )
-
+                   
     data = [trace1, trace2, trace3, trace4, trace5]
     fig = tools.make_subplots(rows=3, cols=1, subplot_titles=('ECG', 'R-R Variabilidad'))
     fig.append_trace(trace1, 1, 1)
@@ -428,7 +431,7 @@ def signal_processing(file_name, divide_plots=False):
     fig['layout']['xaxis2'].update(title='Bloques')#, range=[0, len(x_values)] )
     fig['layout']['yaxis2'].update(title='R-R Intervalos')
     fig['layout']['xaxis3'].update(title='Bloques')#, range=[0, len(x_values)+5])
-
+    
     plot_div = plot(fig, output_type='div', include_plotlyjs=False)
 
     # Si no se requiere plots, enviar 2 variables
@@ -438,7 +441,7 @@ def signal_processing(file_name, divide_plots=False):
     # --------------- Plots de Eventos -----------------
     event_plots = []            #Plots de eventos
     plot_cont   = 0
-
+    
     if len(tiempos_plots) > 0:
         for tiempos_plot in tiempos_plots:
             event_trace = graph_objs.Scatter(
@@ -459,7 +462,7 @@ def signal_processing(file_name, divide_plots=False):
             rrmean_up_plots = []
             rrmean_up_plots.append(rrmean_plots[plot_cont]*1.35)
             rrmean_up_plots = rrmean_up_plots*len(rr_variability_plots[plot_cont])
-
+            
             event_trace3 = graph_objs.Scatter(
                             x=[0, len(rrmean_up_plots)],
                             y=rrmean_up_plots,
@@ -468,7 +471,7 @@ def signal_processing(file_name, divide_plots=False):
             rrmean_down_plots = []
             rrmean_down_plots.append(rrmean_plots[plot_cont]*0.85)
             rrmean_down_plots = rrmean_down_plots*len(rr_variability_plots[plot_cont])
-
+            
             event_trace4 = graph_objs.Scatter(
                             x=[0, len(rrmean_down_plots)],
                             y=rrmean_down_plots,
@@ -490,7 +493,7 @@ def signal_processing(file_name, divide_plots=False):
                             name='Limite R-R (propio)'
                         )
 
-            subplot_titles = ('Evento: del segundo '+ str(int(tiempos_plot[0]))+' - al segundo '+str(int(tiempos_plot[1])),
+            subplot_titles = ('Evento: del segundo '+ str(int(tiempos_plot[0]))+' - al segundo '+str(int(tiempos_plot[1])), 
                                 'R-R Variabilidad')
             event_fig = tools.make_subplots(rows=3, cols=1, subplot_titles=subplot_titles)
             event_fig.append_trace(event_trace, 1, 1)
