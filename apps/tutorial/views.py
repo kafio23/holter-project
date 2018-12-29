@@ -42,3 +42,12 @@ class Plot1DView(TemplateView):
         context['no_sidebar'] = True
         context['title'] = 'Tutoriales'
         return context
+
+def web_manual(request):
+
+    kwargs = {}
+    kwargs['no_sidebar'] = True
+    kwargs['title']      = '¡Bienvenido!'
+    kwargs['subtitle']   = ''
+
+    return render(request, 'tutorial/manual.html', kwargs)
