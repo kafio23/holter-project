@@ -23,3 +23,8 @@ python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
 ```
+
+# Commands
+
+### Dumpdata
+`python manage.py dumpdata --exclude auth.permission --exclude contenttypes --ident 2 > initial.json`

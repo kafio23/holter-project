@@ -1,0 +1,20 @@
+[
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$120000$MrlMRRfH1Vvp$KMR1j0KcfPCmxJhbu1Usxz8uEx9TU82fiob+RsSxmYk=",
+    "last_login": null,
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "admin@holter.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2019-01-28T02:52:45.945Z",
+    "groups": [],
+    "user_permissions": []
+  }
+}
+]
